@@ -43,11 +43,11 @@
     <!-- Top Navigation Alert Banner -->
     <div class="bg-slate-900 text-slate-100 border-b border-slate-800 px-4 py-2 flex items-center justify-between text-xs sm:text-sm z-50">
         <div class="flex items-center gap-2">
-            <span class="bg-emerald-500 text-slate-950 font-bold text-[10px] px-2 py-0.5 rounded uppercase animate-pulse">PRO VERSION</span>
-            <span>Versi Web PetaCAD Pro siap diuji coba secara online! <a href="https://petacad.web.id" target="_blank" class="text-blue-400 hover:underline">Pelajari lebih lanjut</a></span>
+            <span class="bg-emerald-500 text-slate-950 font-bold text-[10px] px-2 py-0.5 rounded uppercase animate-pulse">PRO WEB VERSION</span>
+            <span>Konverter PetaCAD Web Pro siap digunakan secara online!</span>
         </div>
         <div class="hidden sm:flex gap-2">
-            <span class="text-slate-400 text-xs">Masa Aktif: <strong class="text-emerald-400">Selamanya (Gratis)</strong></span>
+            <span class="text-slate-400 text-xs">Sistem Lisensi: <strong class="text-emerald-400">Gratis Selamanya</strong></span>
         </div>
     </div>
 
@@ -74,13 +74,13 @@
                         <i class="fa-solid fa-map-location-dot w-5"></i>
                         <span>Peta - CAD Converter</span>
                     </a>
-                    <a href="#" onclick="showInfoToast('Unggah file KML Anda langsung lewat tombol di panel kanan!')" class="flex items-center gap-3 px-4 py-3 text-slate-600 hover:bg-slate-50 rounded-xl transition text-sm font-medium">
-                        <i class="fa-solid fa-file-import w-5"></i>
-                        <span>Import KML Converter</span>
+                    <a href="#" onclick="openSymbolConfigurator()" class="flex items-center gap-3 px-4 py-3 text-slate-600 hover:bg-slate-50 rounded-xl transition text-sm font-medium">
+                        <i class="fa-solid fa-gear w-5"></i>
+                        <span>Library Simbol</span>
                     </a>
-                    <a href="#" onclick="showInfoToast('Membuka halaman panduan penggunaan PetaCAD')" class="flex items-center gap-3 px-4 py-3 text-slate-600 hover:bg-slate-50 rounded-xl transition text-sm font-medium">
-                        <i class="fa-solid fa-book w-5"></i>
-                        <span>Panduan Survey & CAD</span>
+                    <a href="https://roberto7364.github.io/petacad/" target="_blank" class="flex items-center gap-3 px-4 py-3 text-slate-600 hover:bg-slate-50 rounded-xl transition text-sm font-medium">
+                        <i class="fa-solid fa-globe w-5"></i>
+                        <span>Kunjungi Web Utama</span>
                     </a>
                 </nav>
             </div>
@@ -88,11 +88,8 @@
             <!-- Footer Sidebar -->
             <div class="p-4 border-t border-slate-100">
                 <div class="bg-slate-50 p-3 rounded-xl border border-slate-100 text-center">
-                    <span class="text-xs font-bold text-slate-700 block">Butuh Aplikasi Desktop?</span>
-                    <span class="text-[10px] text-slate-400 block mb-2">Gunakan versi .exe untuk kestabilan penuh tanpa batas area.</span>
-                    <button onclick="showInfoToast('Gunakan file build_exe.bat Anda untuk merakit versi Desktop!')" class="w-full bg-slate-900 hover:bg-slate-800 text-white text-[10px] font-bold py-1.5 rounded-lg transition">
-                        Cara Buat EXE
-                    </button>
+                    <span class="text-xs font-bold text-slate-700 block">Ingin versi Desktop (.exe)?</span>
+                    <span class="text-[10px] text-slate-400 block mb-2">Gunakan file build_exe.bat untuk merakit versi aplikasi Windows.</span>
                 </div>
             </div>
         </aside>
@@ -152,7 +149,7 @@
                         </label>
                     </div>
 
-                    <!-- KML Status Banner (Hidden by default, shown when KML is loaded) -->
+                    <!-- KML Status Banner -->
                     <div id="kmlBanner" class="hidden bg-purple-50 border border-purple-100 rounded-xl p-3 flex items-start gap-2.5 text-xs text-purple-800">
                         <i class="fa-solid fa-circle-check mt-0.5 text-purple-600 animate-bounce"></i>
                         <div>
@@ -189,13 +186,6 @@
                                     <span class="font-medium text-slate-700">Bangunan (Layer: BANGUNAN)</span>
                                 </div>
                                 <span class="text-[10px] text-red-500 font-mono bg-white px-2 py-0.5 rounded border border-slate-200">RED</span>
-                            </label>
-                            <label class="flex items-center justify-between p-2.5 bg-slate-50 border border-slate-100 rounded-xl text-xs cursor-pointer hover:bg-slate-100 transition">
-                                <div class="flex items-center gap-2">
-                                    <input type="checkbox" id="chkWater" checked class="rounded border-slate-300 text-blue-600 focus:ring-blue-500">
-                                    <span class="font-medium text-slate-700">Sungai/Air (Layer: SUNGAI)</span>
-                                </div>
-                                <span class="text-[10px] text-blue-500 font-mono bg-white px-2 py-0.5 rounded border border-slate-200">BLUE</span>
                             </label>
                             <label class="flex items-center justify-between p-2.5 bg-slate-50 border border-slate-100 rounded-xl text-xs cursor-pointer hover:bg-slate-100 transition">
                                 <div class="flex items-center gap-2">
@@ -243,16 +233,47 @@
             </div>
             <div>
                 <h3 class="font-bold text-slate-900 text-sm">File DXF Berhasil Dibuat!</h3>
-                <p class="text-xs text-slate-400 mt-1">Sumbu koordinat UTM meter berhasil terproyeksi otomatis ke dalam gambar CAD.</p>
+                <p class="text-xs text-slate-400 mt-1">Format DXF R12 yang stabil berhasil diunduh dan siap dibuka langsung di AutoCAD Anda.</p>
             </div>
             <div class="bg-slate-50 w-full p-4 rounded-2xl border border-slate-100 text-left text-xs space-y-1.5 text-slate-600 font-medium">
                 <div><strong>Nama File:</strong> <span class="font-mono text-blue-600 text-[11px]" id="modalFileName">petacad_output.dxf</span></div>
-                <div><strong>Sistem Koordinat:</strong> <span class="font-semibold text-[11px]" id="modalProj">UTM Zone 48S (Skala Meter)</span></div>
-                <div><strong>Total Objek Gambar:</strong> <span id="modalStats" class="font-bold text-slate-800">412 Geometri Vektor</span></div>
+                <div><strong>Format Sistem:</strong> <span class="font-semibold text-[11px]" id="modalProj">AutoCAD DXF R12 (Skala Meter)</span></div>
+                <div><strong>Total Objek Gambar:</strong> <span id="modalStats" class="font-bold text-slate-800">0 Geometri Vektor</span></div>
             </div>
             <button onclick="closeSuccessModal()" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs py-3 rounded-xl transition">
                 SELESAI & KEMBALI
             </button>
+        </div>
+    </div>
+
+    <!-- Symbol Library Config Modal (Premium layout like image_907895.png) -->
+    <div id="symbolModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[1000] flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl shadow-2xl max-w-4xl w-full h-[80vh] flex flex-col overflow-hidden border border-slate-100">
+            <!-- Modal Header -->
+            <div class="p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50">
+                <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-images text-blue-600 text-lg"></i>
+                    <h3 class="font-bold text-slate-900 text-md">SETTINGS & SYMBOL LIBRARY CONFIGURATOR</h3>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button onclick="closeSymbolConfigurator()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold text-xs px-4 py-2 rounded-xl transition">Cancel</button>
+                    <button onclick="saveSymbolConfigAndRefresh()" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-xs px-4 py-2 rounded-xl transition shadow-md shadow-emerald-200">💾 Save Changes</button>
+                </div>
+            </div>
+            <!-- Modal Content Body (Split view) -->
+            <div class="flex-1 flex overflow-hidden">
+                <!-- Sidebar left list -->
+                <div class="w-1/3 border-r border-slate-100 p-4 overflow-y-auto bg-slate-50">
+                    <span class="text-[10px] font-bold text-slate-400 block mb-3 uppercase tracking-wider">Daftar Simbol</span>
+                    <div class="space-y-2" id="symbolListContainer">
+                        <!-- Filled dynamically -->
+                    </div>
+                </div>
+                <!-- Editor right panel -->
+                <div class="flex-1 p-6 overflow-y-auto" id="symbolEditorForm">
+                    <!-- Form template -->
+                </div>
+            </div>
         </div>
     </div>
 
@@ -267,14 +288,23 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.js"></script>
 
     <script>
-        // Default View focused on Gegerkalong, Bandung (Indonesia)
+        // Default View focused on Bandung Area
         const defaultLat = -6.89150;
         const defaultLon = 107.61060;
         let satelliteMode = false;
+        let activeSymbolKey = "ODP";
 
-        const map = L.map('map', {
-            zoomControl: false
-        }).setView([defaultLat, defaultLon], 15);
+        // Global Symbol Library State
+        const symbolLibrary = {
+            "ODC": { name: "ODC_CABINET", shape: "Triangle", color_dxf: 1, color_map: "#ef4444", keywords: ["odc", "cabinet", "rk", "feeder"] },
+            "ODP": { name: "ODP_BOX", shape: "Target Circle", color_dxf: 1, color_map: "#ef4444", keywords: ["odp", "fat", "distribution"] },
+            "TE": { name: "TE_POLE", shape: "Circle Cross", color_dxf: 2, color_map: "#eab308", keywords: ["te", "tiang listrik", "pole_electric"] },
+            "TN": { name: "TN_POLE", shape: "Solid Circle", color_dxf: 1, color_map: "#ef4444", keywords: ["tn", "tiang telkom", "pole_telecom"] },
+            "OLT": { name: "OLT_STATION", shape: "Box X", color_dxf: 6, color_map: "#d946ef", keywords: ["olt", "central_office", "co", "headend"] },
+            "JC": { name: "JC_SPLICE", shape: "Circle Slash", color_dxf: 4, color_map: "#06b6d4", keywords: ["jc", "joint", "closure", "splice", "suntik"] }
+        };
+
+        const map = L.map('map', { zoomControl: false }).setView([defaultLat, defaultLon], 15);
 
         // Standard Street Tile Layer
         const streetTiles = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -288,45 +318,30 @@
             attribution: '© Google Satellite'
         });
 
-        // Zoom Control reposition
         L.control.zoom({ position: 'bottomleft' }).addTo(map);
 
-        // Map Drawer Group
         const drawnItems = new L.FeatureGroup();
         map.addLayer(drawnItems);
 
-        // Define bounding box drawing controls
         const drawControl = new L.Control.Draw({
-            edit: {
-                featureGroup: drawnItems,
-                remove: true
-            },
+            edit: { featureGroup: drawnItems, remove: true },
             draw: {
                 polygon: false, polyline: false, circle: false, marker: false, circlemarker: false,
                 rectangle: {
-                    shapeOptions: {
-                        color: '#2563eb',
-                        weight: 2,
-                        fillOpacity: 0.1,
-                        dashArray: '5, 5'
-                    }
+                    shapeOptions: { color: '#2563eb', weight: 2, fillOpacity: 0.1, dashArray: '5, 5' }
                 }
             }
         });
         map.addControl(drawControl);
 
-        // Default initial bounding box bounds
+        // Default bounding box bounds
         const initialBounds = L.latLngBounds([-6.89650, 107.60560], [-6.88650, 107.61560]);
         const initialRect = L.rectangle(initialBounds, {
-            color: '#2563eb',
-            weight: 2,
-            fillOpacity: 0.1,
-            dashArray: '5, 5'
+            color: '#2563eb', weight: 2, fillOpacity: 0.1, dashArray: '5, 5'
         }).addTo(drawnItems);
 
         updateCoordinateFields(initialBounds);
 
-        // Listeners for rectangle drawing
         map.on(L.Draw.Event.CREATED, function (e) {
             drawnItems.clearLayers();
             const layer = e.layer;
@@ -341,10 +356,9 @@
             });
         });
 
-        // Toggle Drawing Trigger
         document.getElementById('btnDraw').addEventListener('click', () => {
             new L.Draw.Rectangle(map, drawControl.options.draw.rectangle).enable();
-            showInfoToast("Silakan klik dan seret mouse pada peta untuk menggambar kotak!");
+            showInfoToast("Klik dan seret mouse pada peta untuk menggambar kotak!");
         });
 
         // Toggle Satellite/Street Layer
@@ -371,7 +385,6 @@
             document.getElementById('valEast').innerText = bounds.getEast().toFixed(5);
         }
 
-        // Custom alert/toast helper
         function showInfoToast(text) {
             const toast = document.getElementById('toast');
             document.getElementById('toastText').innerText = text;
@@ -383,8 +396,112 @@
             }, 3000);
         }
 
+        // MODAL CONFIGURATOR SYSTEM
+        function openSymbolConfigurator() {
+            document.getElementById('symbolModal').classList.remove('hidden');
+            renderSymbolList();
+            renderSymbolForm(activeSymbolKey);
+        }
+
+        function closeSymbolConfigurator() {
+            document.getElementById('symbolModal').classList.add('hidden');
+        }
+
+        function renderSymbolList() {
+            const container = document.getElementById('symbolListContainer');
+            container.innerHTML = "";
+            Object.keys(symbolLibrary).forEach(key => {
+                const sym = symbolLibrary[key];
+                const activeClass = (key === activeSymbolKey) ? 'bg-blue-50 border-blue-500 text-blue-600' : 'bg-white border-slate-100 hover:bg-slate-50 text-slate-700';
+                container.innerHTML += `
+                    <div onclick="selectSymbol('${key}')" class="p-3 border-2 rounded-xl text-xs font-semibold cursor-pointer transition flex items-center justify-between ${activeClass}">
+                        <span>${key} (${sym.name})</span>
+                        <span class="w-3 h-3 rounded-full" style="background-color: ${sym.color_map}"></span>
+                    </div>
+                `;
+            });
+        }
+
+        function selectSymbol(key) {
+            saveCurrentFormState();
+            activeSymbolKey = key;
+            renderSymbolList();
+            renderSymbolForm(key);
+        }
+
+        function renderSymbolForm(key) {
+            const sym = symbolLibrary[key];
+            const container = document.getElementById('symbolEditorForm');
+            container.innerHTML = `
+                <div class="space-y-4">
+                    <h4 class="font-bold text-slate-900 text-sm border-b pb-2 uppercase tracking-wide">⚙️ Edit Simbol: ${key}</h4>
+                    <div>
+                        <label class="text-[10px] font-bold text-slate-400 block mb-1">NAMA LAYER DXF</label>
+                        <input id="editLayerName" type="text" class="w-full bg-slate-50 border border-slate-200 text-xs rounded-xl p-2.5 font-mono" value="${sym.name}">
+                    </div>
+                    <div>
+                        <label class="text-[10px] font-bold text-slate-400 block mb-1">BENTUK GEOMETRI AUTOCAD</label>
+                        <select id="editShape" class="w-full bg-slate-50 border border-slate-200 text-xs rounded-xl p-2.5 font-medium">
+                            <option value="Target Circle" ${sym.shape === 'Target Circle' ? 'selected' : ''}>Target Circle (ODP)</option>
+                            <option value="Triangle" ${sym.shape === 'Triangle' ? 'selected' : ''}>Triangle (ODC)</option>
+                            <option value="Circle Cross" ${sym.shape === 'Circle Cross' ? 'selected' : ''}>Circle Cross (Tiang TE)</option>
+                            <option value="Solid Circle" ${sym.shape === 'Solid Circle' ? 'selected' : ''}>Solid Circle (Tiang TN)</option>
+                            <option value="Box X" ${sym.shape === 'Box X' ? 'selected' : ''}>Box X (OLT)</option>
+                            <option value="Circle Slash" ${sym.shape === 'Circle Slash' ? 'selected' : ''}>Circle Slash (Joint Closure)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="text-[10px] font-bold text-slate-400 block mb-1">WARNA DXF (COLOR INDEX)</label>
+                        <select id="editColorDxf" class="w-full bg-slate-50 border border-slate-200 text-xs rounded-xl p-2.5 font-medium">
+                            <option value="1" ${sym.color_dxf === 1 ? 'selected' : ''}>1 - Red</option>
+                            <option value="2" ${sym.color_dxf === 2 ? 'selected' : ''}>2 - Yellow</option>
+                            <option value="3" ${sym.color_dxf === 3 ? 'selected' : ''}>3 - Green</option>
+                            <option value="4" ${sym.color_dxf === 4 ? 'selected' : ''}>4 - Cyan</option>
+                            <option value="5" ${sym.color_dxf === 5 ? 'selected' : ''}>5 - Blue</option>
+                            <option value="6" ${sym.color_dxf === 6 ? 'selected' : ''}>6 - Magenta</option>
+                            <option value="7" ${sym.color_dxf === 7 ? 'selected' : ''}>7 - White</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="text-[10px] font-bold text-slate-400 block mb-1">WARNA DI PETA (HEX)</label>
+                        <input id="editColorMap" type="text" class="w-full bg-slate-50 border border-slate-200 text-xs rounded-xl p-2.5 font-mono" value="${sym.color_map}">
+                    </div>
+                    <div>
+                        <label class="text-[10px] font-bold text-slate-400 block mb-1">ATURAN KATA KUNCI PARSING KML (PISAH KOMA)</label>
+                        <input id="editKeywords" type="text" class="w-full bg-slate-50 border border-slate-200 text-xs rounded-xl p-2.5" value="${sym.keywords.join(', ')}">
+                    </div>
+                </div>
+            `;
+        }
+
+        function saveCurrentFormState() {
+            const editLayerName = document.getElementById('editLayerName');
+            if (!editLayerName) return;
+
+            const name = editLayerName.value.trim().toUpperCase();
+            const shape = document.getElementById('editShape').value;
+            const color_dxf = parseInt(document.getElementById('editColorDxf').value);
+            const color_map = document.getElementById('editColorMap').value.trim();
+            const rawKeywords = document.getElementById('editKeywords').value.split(",");
+            const keywords = rawKeywords.map(kw => kw.trim().toLowerCase()).filter(kw => kw.length > 0);
+
+            symbolLibrary[activeSymbolKey] = { name, shape, color_dxf, color_map, keywords };
+        }
+
+        function saveSymbolConfigAndRefresh() {
+            saveCurrentFormState();
+            closeSymbolConfigurator();
+            showInfoToast("Konfigurasi simbol library berhasil diperbarui!");
+            if (lastLoadedKmlText && lastLoadedKmlName) {
+                processKmlData(lastLoadedKmlName, lastLoadedKmlText);
+            }
+        }
+
+        // KML FILE LOADER & PARSER
         let parsedKmlPoints = [];
         let parsedKmlPaths = [];
+        let lastLoadedKmlText = "";
+        let lastLoadedKmlName = "";
 
         document.getElementById('kmlFileInput').addEventListener('change', function(e) {
             const file = e.target.files[0];
@@ -392,15 +509,50 @@
 
             const reader = new FileReader();
             reader.onload = function(evt) {
-                const kmlText = evt.target.result;
-                processKmlData(file.name, kmlText);
+                lastLoadedKmlText = evt.target.result;
+                lastLoadedKmlName = file.name;
+                processKmlData(file.name, lastLoadedKmlText);
             };
             reader.readAsText(file);
         });
 
+        function getMarkerIconSvg(colorHex, shape) {
+            let innerSvg = "";
+            if (shape === "Target Circle") {
+                innerSvg = `<circle cx="16" cy="16" r="10" stroke="${colorHex}" stroke-width="2" fill="none"/>
+                            <circle cx="16" cy="16" r="4" fill="${colorHex}"/>
+                            <line x1="16" y1="2" x2="16" y2="30" stroke="${colorHex}" stroke-width="1.5"/>
+                            <line x1="2" y1="16" x2="30" y2="16" stroke="${colorHex}" stroke-width="1.5"/>`;
+            } else if (shape === "Triangle") {
+                innerSvg = `<polygon points="16,4 28,26 4,26" fill="${colorHex}" stroke="white" stroke-width="1.5"/>
+                            <line x1="16" y1="4" x2="16" y2="26" stroke="white" stroke-width="1"/>`;
+            } else if (shape === "Circle Cross") {
+                innerSvg = `<circle cx="16" cy="16" r="11" fill="${colorHex}" stroke="white" stroke-width="1.5"/>
+                            <line x1="16" y1="7" x2="16" y2="25" stroke="black" stroke-width="2"/>
+                            <line x1="7" y1="16" x2="25" y2="16" stroke="black" stroke-width="2"/>`;
+            } else if (shape === "Solid Circle") {
+                innerSvg = `<circle cx="16" cy="16" r="12" fill="${colorHex}" stroke="white" stroke-width="2"/>`;
+            } else if (shape === "Box X") {
+                innerSvg = `<rect x="5" y="5" width="22" height="22" fill="${colorHex}" stroke="black" stroke-width="2"/>
+                            <line x1="5" y1="5" x2="27" y2="27" stroke="white" stroke-width="2"/>
+                            <line x1="5" y1="27" x2="27" y2="5" stroke="white" stroke-width="2"/>`;
+            } else if (shape === "Circle Slash") {
+                innerSvg = `<circle cx="16" cy="16" r="12" fill="${colorHex}" stroke="white" stroke-width="2"/>
+                            <line x1="7" y1="25" x2="25" y2="7" stroke="white" stroke-width="3"/>`;
+            } else {
+                innerSvg = `<circle cx="16" cy="16" r="10" fill="#3b82f6" stroke="white" stroke-width="2"/>`;
+            }
+
+            const fullSvg = `
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+                    ${innerSvg}
+                </svg>
+            `;
+            return 'data:image/svg+xml;utf8,' + encodeURIComponent(fullSvg);
+        }
+
         function processKmlData(fileName, kmlText) {
             try {
-                // Parse XML/KML content
                 const parser = new DOMParser();
                 const xmlDoc = parser.parseFromString(kmlText, "text/xml");
                 
@@ -416,23 +568,38 @@
                     const nameNode = pm.getElementsByTagName("name")[0];
                     const name = nameNode ? nameNode.textContent.trim() : `Penanda ${i + 1}`;
 
-                    // Extract coordinates from Point tag
+                    // Extract Points
                     const point = pm.getElementsByTagName("Point")[0];
                     if (point) {
                         const coordNode = point.getElementsByTagName("coordinates")[0];
                         if (coordNode) {
                             const parts = coordNode.textContent.trim().split(",");
                             if (parts.length >= 2) {
-                                const lon = parseFloat(parts[0]);
-                                const lat = parseFloat(parts[1]);
-                                parsedKmlPoints.push({ lat, lon, name });
+                                const lon = parseFloat(parts[0].trim());
+                                const lat = parseFloat(parts[1].trim());
+                                
+                                // Dynamic Symbol Classification
+                                const nameLower = name.toLowerCase();
+                                let detectedType = "DEFAULT";
+                                for (const symKey of Object.keys(symbolLibrary)) {
+                                    const sym = symbolLibrary[symKey];
+                                    for (const kw of sym.keywords) {
+                                        if (nameLower.includes(kw)) {
+                                            detectedType = symKey;
+                                            break;
+                                        }
+                                    }
+                                    if (detectedType !== "DEFAULT") break;
+                                }
+
+                                parsedKmlPoints.push({ lat, lon, name, type: detectedType });
                                 allLats.push(lat);
                                 allLons.push(lon);
                             }
                         }
                     }
 
-                    // Extract coordinates from LineString tag
+                    // Extract Lines / Polygons
                     const line = pm.getElementsByTagName("LineString")[0] || pm.getElementsByTagName("Polygon")[0];
                     if (line) {
                         const coordNode = line.getElementsByTagName("coordinates")[0];
@@ -442,8 +609,8 @@
                             coordStrings.forEach(str => {
                                 const parts = str.split(",");
                                 if (parts.length >= 2) {
-                                    const lon = parseFloat(parts[0]);
-                                    const lat = parseFloat(parts[1]);
+                                    const lon = parseFloat(parts[0].trim());
+                                    const lat = parseFloat(parts[1].trim());
                                     path.push([lat, lon]);
                                     allLats.push(lat);
                                     allLons.push(lon);
@@ -456,25 +623,27 @@
                     }
                 }
 
-                // Show KML elements on map
+                // Render on Leaflet
                 if (allLats.length > 0) {
                     drawnItems.clearLayers();
                     
-                    // Draw KML Lines
+                    // Render paths
                     parsedKmlPaths.forEach(path => {
                         L.polyline(path, { color: '#d946ef', weight: 3 }).addTo(drawnItems);
                     });
 
-                    // Draw KML Markers (ODP symbols simulation)
+                    // Render points
                     parsedKmlPoints.forEach(pt => {
-                        // Create circular dot style
-                        L.circleMarker([pt.lat, pt.lon], {
-                            radius: 6,
-                            fillColor: '#ef4444',
-                            color: '#ffffff',
-                            weight: 2,
-                            fillOpacity: 1
-                        }).addTo(drawnItems).bindTooltip(pt.name, { permanent: true, direction: 'right', className: 'bg-transparent border-0 text-slate-800 text-[10px] font-bold font-mono' });
+                        const sym = symbolLibrary[pt.type] || { color_map: "#3b82f6", shape: "Default" };
+                        const iconUrl = getMarkerIconSvg(sym.color_map, sym.shape);
+                        const customIcon = L.icon({
+                            iconUrl: iconUrl,
+                            iconSize: [24, 24],
+                            iconAnchor: [12, 12]
+                        });
+
+                        L.marker([pt.lat, pt.lon], { icon: customIcon }).addTo(drawnItems)
+                            .bindTooltip(pt.name, { permanent: true, direction: 'right', className: 'bg-white/90 border border-slate-100 rounded px-1.5 py-0.5 text-slate-800 text-[9px] font-bold font-mono shadow-sm' });
                     });
 
                     // Fit Map Bounds
@@ -484,14 +653,14 @@
                     // Auto-adjust bounding box coordinates
                     updateCoordinateFields(bounds);
                     
-                    // Update layout components
+                    // Show status
                     document.getElementById('kmlBanner').classList.remove('hidden');
                     document.getElementById('kmlFileName').innerText = fileName;
-                    document.getElementById('kmlFileStats').innerText = `Ditemukan ${parsedKmlPoints.length} ODP & ${parsedKmlPaths.length} Jalur Kabel`;
+                    document.getElementById('kmlFileStats').innerText = `Ditemukan ${parsedKmlPoints.length} Titik & ${parsedKmlPaths.length} Jalur Kabel`;
                     
-                    showInfoToast("KML berhasil dimuat dan dipetakan!");
+                    showInfoToast("Data KML berhasil dipetakan!");
                 } else {
-                    showInfoToast("Gagal menemukan titik koordinat di dalam KML.");
+                    showInfoToast("Gagal menemukan koordinat valid di dalam KML.");
                 }
 
             } catch (err) {
@@ -499,6 +668,7 @@
             }
         }
 
+        // Projecting Latitude/Longitude (WGS84) to Web Mercator Projection
         function wgs84ToWebMercator(lon, lat) {
             const r_major = 6378137.0;
             const x = r_major * lon * Math.PI / 180;
@@ -508,83 +678,129 @@
             return { x: x, y: y };
         }
 
-        function createDxfContent(north, south, west, east, config) {
+        // DXF R12 COMPLETE COMPATIBLE ENGINE
+        function createDxfContentR12(north, south, west, east, config) {
             const minPt = wgs84ToWebMercator(parseFloat(west), parseFloat(south));
             const maxPt = wgs84ToWebMercator(parseFloat(east), parseFloat(north));
 
-            // AutoCAD DXF format header
-            let dxf = `0\nSECTION\n2\nHEADER\n9\n$ACADVER\n1\nAC1015\n0\nENDSEC\n0\nSECTION\n2\nTABLES\n0\nTABLE\n2\nLAYER\n70\n4\n`;
+            let dxf = "0\nSECTION\n2\nHEADER\n0\nENDSEC\n0\nSECTION\n2\nTABLES\n0\nTABLE\n2\nLAYER\n70\n10\n";
             
-            if (config.roads) dxf += `0\nLAYER\n2\nJALAN\n70\n0\n62\n7\n`;
-            if (config.buildings) dxf += `0\nLAYER\n2\nBANGUNAN\n70\n0\n62\n1\n`;
-            if (config.water) dxf += `0\nLAYER\n2\nSUNGAI\n70\n0\n62\n5\n`;
-            if (config.kml) dxf += `0\nLAYER\n2\nIMPORT_KML\n70\n0\n62\n6\n`;
+            // Standard CAD Layers Setup
+            dxf += "0\nLAYER\n2\nJALAN\n70\n64\n62\n7\n";       // White color index
+            dxf += "0\nLAYER\n2\nBANGUNAN\n70\n64\n62\n1\n";    // Red color index
+            dxf += "0\nLAYER\n2\nIMPORT_KML\n70\n64\n62\n6\n";   // Magenta color index
+            dxf += "0\nLAYER\n2\nTEKS_NAMA\n70\n64\n62\n2\n";    // Yellow color index
 
-            dxf += `0\nENDTAB\n0\nENDSEC\n0\nSECTION\n2\nENTITIES\n`;
+            // Register Custom Layers from Symbol Library
+            Object.keys(symbolLibrary).forEach(key => {
+                const sym = symbolLibrary[key];
+                dxf += `0\nLAYER\n2\n${sym.name}\n70\n64\n62\n${sym.color_dxf}\n`;
+            });
+
+            dxf += "0\nENDTAB\n0\nENDSEC\n0\nSECTION\n2\nENTITIES\n";
 
             let elementCount = 0;
 
-            // Render simulated roads (double lines with fillet radius)
+            // Render select borders
+            dxf += `0\nLINE\n8\nBORDER\n10\n${minPt.x}\n20\n${minPt.y}\n11\n${maxPt.x}\n21\n${minPt.y}\n`;
+            dxf += `0\nLINE\n8\nBORDER\n10\n${maxPt.x}\n20\n${minPt.y}\n11\n${maxPt.x}\n21\n${maxPt.y}\n`;
+            dxf += `0\nLINE\n8\nBORDER\n10\n${maxPt.x}\n20\n${maxPt.y}\n11\n${minPt.x}\n21\n${maxPt.y}\n`;
+            dxf += `0\nLINE\n8\nBORDER\n10\n${minPt.x}\n20\n${maxPt.y}\n11\n${minPt.x}\n21\n${minPt.y}\n`;
+            elementCount += 4;
+
+            // Generate Simulated roads for preview
             if (config.roads) {
                 const step = (maxPt.y - minPt.y) / 8;
                 for (let y = minPt.y + step; y < maxPt.y; y += step) {
-                    // Left edge of the road
-                    dxf += `0\nLWPOLYLINE\n8\nJALAN\n90\n2\n70\n0\n10\n${minPt.x}\n20\n${y - 4}\n10\n${maxPt.x}\n20\n${y - 4}\n`;
-                    // Right edge of the road
-                    dxf += `0\nLWPOLYLINE\n8\nJALAN\n90\n2\n70\n0\n10\n${minPt.x}\n20\n${y + 4}\n10\n${maxPt.x}\n20\n${y + 4}\n`;
+                    dxf += `0\nLINE\n8\nJALAN\n10\n${minPt.x}\n20\n${y - 4}\n11\n${maxPt.x}\n21\n${y - 4}\n`;
+                    dxf += `0\nLINE\n8\nJALAN\n10\n${minPt.x}\n20\n${y + 4}\n11\n${maxPt.x}\n21\n${y + 4}\n`;
                     elementCount += 2;
                 }
             }
 
-            // Render buildings (polygons)
+            // Generate Simulated building blocks
             if (config.buildings) {
-                const bSize = 35; // 35 meters building blocks
+                const bSize = 30; 
                 const stepX = (maxPt.x - minPt.x) / 6;
                 const stepY = (maxPt.y - minPt.y) / 6;
 
                 for (let x = minPt.x + stepX; x < maxPt.x; x += stepX) {
                     for (let y = minPt.y + stepY; y < maxPt.y; y += stepY) {
-                        dxf += `0\nLWPOLYLINE\n8\nBANGUNAN\n90\n5\n70\n1\n`;
-                        dxf += `10\n${x - bSize}\n20\n${y - bSize}\n`;
-                        dxf += `10\n${x + bSize}\n20\n${y - bSize}\n`;
-                        dxf += `10\n${x + bSize}\n20\n${y + bSize}\n`;
-                        dxf += `10\n${x - bSize}\n20\n${y + bSize}\n`;
-                        dxf += `10\n${x - bSize}\n20\n${y - bSize}\n`;
-                        elementCount++;
+                        dxf += `0\nLINE\n8\nBANGUNAN\n10\n${x - bSize}\n20\n${y - bSize}\n11\n${x + bSize}\n21\n${y - bSize}\n`;
+                        dxf += `0\nLINE\n8\nBANGUNAN\n10\n${x + bSize}\n20\n${y - bSize}\n11\n${x + bSize}\n21\n${y + bSize}\n`;
+                        dxf += `0\nLINE\n8\nBANGUNAN\n10\n${x + bSize}\n20\n${y + bSize}\n11\n${x - bSize}\n21\n${y + bSize}\n`;
+                        dxf += `0\nLINE\n8\nBANGUNAN\n10\n${x - bSize}\n20\n${y + bSize}\n11\n${x - bSize}\n21\n${y - bSize}\n`;
+                        elementCount += 4;
                     }
                 }
             }
 
-            // Render KML imported entities (Points & Lines)
+            // Generate Imported KML points & lines
             if (config.kml && parsedKmlPoints.length > 0) {
                 parsedKmlPoints.forEach(pt => {
                     const localPt = wgs84ToWebMercator(pt.lon, pt.lat);
-                    // Draw Target Circle shape in CAD
-                    dxf += `0\nCIRCLE\n8\nIMPORT_KML\n10\n${localPt.x}\n20\n${localPt.y}\n40\n1.5\n`;
-                    dxf += `0\nCIRCLE\n8\nIMPORT_KML\n10\n${localPt.x}\n20\n${localPt.y}\n40\n3.0\n`;
-                    dxf += `0\nLINE\n8\nIMPORT_KML\n10\n${localPt.x - 4}\n20\n${localPt.y}\n11\n${localPt.x + 4}\n21\n${localPt.y}\n`;
-                    dxf += `0\nLINE\n8\nIMPORT_KML\n10\n${localPt.x}\n20\n${localPt.y - 4}\n11\n${localPt.x}\n21\n${localPt.y + 4}\n`;
-                    
-                    // Draw name text adjacent to the symbol
-                    dxf += `0\nTEXT\n8\nIMPORT_KML\n10\n${localPt.x + 4.5}\n20\n${localPt.y + 1}\n40\n2.0\n1\n${pt.name}\n`;
-                    elementCount += 5;
-                });
+                    const sym = symbolLibrary[pt.type] || { name: "IMPORT_KML", shape: "Target Circle" };
+                    const layer = sym.name;
+                    const shape = sym.shape;
 
-                parsedKmlPaths.forEach(path => {
-                    dxf += `0\nLWPOLYLINE\n8\nIMPORT_KML\n90\n${path.length}\n70\n0\n`;
-                    path.forEach(node => {
-                        const localNode = wgs84ToWebMercator(node[1], node[0]);
-                        dxf += `10\n${localNode.x}\n20\n${localNode.y}\n`;
-                    });
+                    if (shape === "Target Circle") {
+                        dxf += `0\nCIRCLE\n8\n${layer}\n10\n${localPt.x}\n20\n${localPt.y}\n40\n1.0\n`;
+                        dxf += `0\nCIRCLE\n8\n${layer}\n10\n${localPt.x}\n20\n${localPt.y}\n40\n2.0\n`;
+                        dxf += `0\nLINE\n8\n${layer}\n10\n${localPt.x - 2.5}\n20\n${localPt.y}\n11\n${localPt.x + 2.5}\n21\n${localPt.y}\n`;
+                        dxf += `0\nLINE\n8\n${layer}\n10\n${localPt.x}\n20\n${localPt.y - 2.5}\n11\n${localPt.x}\n21\n${localPt.y + 2.5}\n`;
+                        elementCount += 4;
+                    } else if (shape === "Triangle") {
+                        dxf += `0\nLINE\n8\n${layer}\n10\n${localPt.x}\n20\n${localPt.y + 2.0}\n11\n${localPt.x + 1.73}\n21\n${localPt.y - 1.0}\n`;
+                        dxf += `0\nLINE\n8\n${layer}\n10\n${localPt.x + 1.73}\n20\n${localPt.y - 1.0}\n11\n${localPt.x - 1.73}\n21\n${localPt.y - 1.0}\n`;
+                        dxf += `0\nLINE\n8\n${layer}\n10\n${localPt.x - 1.73}\n20\n${localPt.y - 1.0}\n11\n${localPt.x}\n21\n${localPt.y + 2.0}\n`;
+                        dxf += `0\nLINE\n8\n${layer}\n10\n${localPt.x}\n20\n${localPt.y + 2.0}\n11\n${localPt.x}\n21\n${localPt.y - 1.0}\n`;
+                        elementCount += 4;
+                    } else if (shape === "Circle Cross") {
+                        dxf += `0\nCIRCLE\n8\n${layer}\n10\n${localPt.x}\n20\n${localPt.y}\n40\n1.2\n`;
+                        dxf += `0\nLINE\n8\n${layer}\n10\n${localPt.x - 1.5}\n20\n${localPt.y}\n11\n${localPt.x + 1.5}\n21\n${localPt.y}\n`;
+                        dxf += `0\nLINE\n8\n${layer}\n10\n${localPt.x}\n20\n${localPt.y - 1.5}\n11\n${localPt.x}\n21\n${localPt.y + 1.5}\n`;
+                        elementCount += 3;
+                    } else if (shape === "Solid Circle") {
+                        dxf += `0\nCIRCLE\n8\n${layer}\n10\n${localPt.x}\n20\n${localPt.y}\n40\n0.4\n`;
+                        dxf += `0\nCIRCLE\n8\n${layer}\n10\n${localPt.x}\n20\n${localPt.y}\n40\n0.8\n`;
+                        dxf += `0\nCIRCLE\n8\n${layer}\n10\n${localPt.x}\n20\n${localPt.y}\n40\n1.2\n`;
+                        elementCount += 3;
+                    } else if (shape === "Box X") {
+                        dxf += `0\nLINE\n8\n${layer}\n10\n${localPt.x - 1.5}\n20\n${localPt.y - 1.5}\n11\n${localPt.x + 1.5}\n21\n${localPt.y - 1.5}\n`;
+                        dxf += `0\nLINE\n8\n${layer}\n10\n${localPt.x + 1.5}\n20\n${localPt.y - 1.5}\n11\n${localPt.x + 1.5}\n21\n${localPt.y + 1.5}\n`;
+                        dxf += `0\nLINE\n8\n${layer}\n10\n${localPt.x + 1.5}\n20\n${localPt.y + 1.5}\n11\n${localPt.x - 1.5}\n21\n${localPt.y + 1.5}\n`;
+                        dxf += `0\nLINE\n8\n${layer}\n10\n${localPt.x - 1.5}\n20\n${localPt.y + 1.5}\n11\n${localPt.x - 1.5}\n21\n${localPt.y - 1.5}\n`;
+                        dxf += `0\nLINE\n8\n${layer}\n10\n${localPt.x - 1.5}\n20\n${localPt.y - 1.5}\n11\n${localPt.x + 1.5}\n21\n${localPt.y + 1.5}\n`;
+                        dxf += `0\nLINE\n8\n${layer}\n10\n${localPt.x - 1.5}\n20\n${localPt.y + 1.5}\n11\n${localPt.x + 1.5}\n21\n${localPt.y - 1.5}\n`;
+                        elementCount += 6;
+                    } else if (shape === "Circle Slash") {
+                        dxf += `0\nCIRCLE\n8\n${layer}\n10\n${localPt.x}\n20\n${localPt.y}\n40\n1.5\n`;
+                        dxf += `0\nLINE\n8\n${layer}\n10\n${localPt.x - 1.5}\n20\n${localPt.y - 1.5}\n11\n${localPt.x + 1.5}\n21\n${localPt.y + 1.5}\n`;
+                        elementCount += 2;
+                    }
+
+                    // Export labels
+                    dxf += `0\nTEXT\n8\nTEKS_NAMA\n10\n${localPt.x + 2.2}\n20\n${localPt.y + 0.5}\n40\n1.5\n1\n${pt.name}\n`;
                     elementCount++;
                 });
             }
 
-            dxf += `0\nENDSEC\n0\nEOF\n`;
+            if (config.kml && parsedKmlPaths.length > 0) {
+                parsedKmlPaths.forEach(path => {
+                    for (let i = 0; i < path.length - 1; i++) {
+                        const pt1 = wgs84ToWebMercator(path[i][1], path[i][0]);
+                        const pt2 = wgs84ToWebMercator(path[i+1][1], path[i+1][0]);
+                        dxf += `0\nLINE\n8\nIMPORT_KML\n10\n${pt1.x}\n20\n${pt1.y}\n11\n${pt2.x}\n21\n${pt2.y}\n`;
+                        elementCount++;
+                    }
+                });
+            }
+
+            dxf += "0\nENDSEC\n0\nEOF\n";
             return { dxf, elementCount };
         }
 
-        // Action Trigger for Download
+        // Download handler
         document.getElementById('btnDownload').addEventListener('click', () => {
             const loaderOverlay = document.getElementById('loadingOverlay');
             const loaderTitle = document.getElementById('loaderTitle');
@@ -599,54 +815,42 @@
             const config = {
                 roads: document.getElementById('chkRoads').checked,
                 buildings: document.getElementById('chkBuildings').checked,
-                water: document.getElementById('chkWater').checked,
                 kml: document.getElementById('chkKml').checked
             };
 
-            // Start Simulated Download Steps
             loaderOverlay.classList.remove('hidden');
-            loaderBar.style.width = "10%";
+            loaderBar.style.width = "15%";
 
             setTimeout(() => {
-                loaderTitle.innerText = "Mengambil Data Spasial OSM...";
-                loaderSubtitle.innerText = "Menghubungi server Overpass OpenStreetMap";
-                loaderBar.style.width = "40%";
+                loaderTitle.innerText = "Mengolah Sebaran Koordinat...";
+                loaderSubtitle.innerText = "Membuat proyeksi UTM Skala Meter";
+                loaderBar.style.width = "50%";
             }, 1000);
 
             setTimeout(() => {
-                loaderTitle.innerText = "Mengonversi Proyeksi Koordinat...";
-                loaderSubtitle.innerText = "Menerapkan proyeksi UTM Skala Meter";
-                loaderBar.style.width = "75%";
-            }, 2500);
-
-            setTimeout(() => {
-                loaderTitle.innerText = "Menyusun Garis CAD (Double-Line Fillet)...";
-                loaderSubtitle.innerText = "Merapikan persimpangan jalan agar saling menyatu";
+                loaderTitle.innerText = "Merakit Format CAD R12...";
+                loaderSubtitle.innerText = "Mengekspor simbol & label penamaan";
                 loaderBar.style.width = "100%";
-            }, 3800);
+            }, 2500);
 
             setTimeout(() => {
                 loaderOverlay.classList.add('hidden');
                 
-                // Call DXF Builder
-                const outData = createDxfContent(n, s, w, e, config);
+                const outData = createDxfContentR12(n, s, w, e, config);
 
-                // Trigger direct browser download
                 const blob = new Blob([outData.dxf], { type: 'application/dxf' });
                 const link = document.createElement('a');
                 link.href = URL.createObjectURL(blob);
-                link.download = `PetaCAD_Output_${Date.now()}.dxf`;
+                link.download = `PetaCAD_R12_Output_${Date.now()}.dxf`;
                 document.body.appendChild(link);
                 link.click();
                 document.body.removeChild(link);
 
-                // Set success modal values
-                document.getElementById('modalFileName').innerText = `PetaCAD_Output_${Date.now()}.dxf`;
+                document.getElementById('modalFileName').innerText = `PetaCAD_R12_Output_${Date.now()}.dxf`;
                 document.getElementById('modalStats').innerText = `${outData.elementCount} Objek Geometri Vektor`;
                 
-                // Show Success Modal
                 document.getElementById('successModal').classList.remove('hidden');
-            }, 5000);
+            }, 3800);
         });
 
         function closeSuccessModal() {
