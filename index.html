@@ -4,969 +4,155 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PetaCAD - Konverter Peta & KML ke DXF AutoCAD</title>
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
-    <!-- Leaflet Draw CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.css"/>
-    <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts Inter -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-        }
-        #map {
-            height: 100%;
-            z-index: 1;
-        }
-        ::-webkit-scrollbar {
-            width: 6px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #f1f5f9;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #94a3b8;
-        }
+        body { font-family: 'Inter', sans-serif; }
+        #map { height: 100%; z-index: 1; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-800 overflow-hidden h-screen flex flex-col">
 
-    <!-- STREAMING_CHUNK: Rendering the Top Alert Navigation Banner -->
-    <div class="bg-slate-900 text-slate-100 border-b border-slate-800 px-4 py-2 flex items-center justify-between text-xs sm:text-sm z-50">
-        <div class="flex items-center gap-2">
-            <span class="bg-emerald-500 text-slate-950 font-bold text-[10px] px-2 py-0.5 rounded uppercase animate-pulse">PRO WEB VERSION</span>
-            <span>Konverter PetaCAD Web Pro siap digunakan secara online!</span>
-        </div>
-        <div class="hidden sm:flex gap-2">
-            <span class="text-slate-400 text-xs">Sistem Lisensi: <strong class="text-emerald-400">Gratis Selamanya</strong></span>
+    <!-- Navbar -->
+    <div class="bg-slate-900 text-slate-100 px-4 py-2 flex items-center justify-between text-xs sm:text-sm z-50">
+        <div class="flex items-center gap-2 font-bold text-emerald-400 uppercase tracking-widest text-[10px]">
+            <i class="fa-solid fa-satellite-dish"></i> PetaCAD Web Pro - GIS-to-CAD Engine
         </div>
     </div>
 
-    <!-- Main Content Container -->
     <div class="flex flex-1 overflow-hidden">
-        
-        <!-- STREAMING_CHUNK: Building the Sidebar Menu Kiri -->
-        <aside class="w-64 bg-white border-r border-slate-200 flex flex-col justify-between hidden lg:flex z-40">
-            <div>
-                <!-- Brand Header -->
-                <div class="p-6 border-b border-slate-100 flex items-center gap-3">
-                    <div class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-blue-200">
-                        <i class="fa-solid fa-layer-group"></i>
-                    </div>
-                    <div>
-                        <h1 class="font-bold text-slate-900 text-md leading-tight">PetaCAD Web</h1>
-                        <span class="text-[10px] text-slate-400 font-semibold tracking-wider uppercase">GIS-to-CAD Engine</span>
-                    </div>
-                </div>
-
-                <!-- Navigation List -->
-                <nav class="p-4 space-y-1">
-                    <a href="#" class="flex items-center gap-3 px-4 py-3 bg-blue-50 text-blue-600 rounded-xl transition text-sm font-semibold">
-                        <i class="fa-solid fa-map-location-dot w-5"></i>
-                        <span>Peta - CAD Converter</span>
-                    </a>
-                    <a href="#" onclick="openSymbolConfigurator()" class="flex items-center gap-3 px-4 py-3 text-slate-600 hover:bg-slate-50 rounded-xl transition text-sm font-medium">
-                        <i class="fa-solid fa-gear w-5"></i>
-                        <span>Library Simbol</span>
-                    </a>
-                    <a href="https://roberto7364.github.io/petacad/" target="_blank" class="flex items-center gap-3 px-4 py-3 text-slate-600 hover:bg-slate-50 rounded-xl transition text-sm font-medium">
-                        <i class="fa-solid fa-globe w-5"></i>
-                        <span>Kunjungi Web Utama</span>
-                    </a>
-                </nav>
-            </div>
-
-            <!-- Footer Sidebar -->
-            <div class="p-4 border-t border-slate-100">
-                <div class="bg-slate-50 p-3 rounded-xl border border-slate-100 text-center">
-                    <span class="text-xs font-bold text-slate-700 block">Ingin versi Desktop (.exe)?</span>
-                    <span class="text-[10px] text-slate-400 block mb-2">Gunakan file build_exe.bat untuk merakit versi aplikasi Windows.</span>
+        <!-- Sidebar -->
+        <aside class="w-64 bg-white border-r border-slate-200 hidden lg:flex flex-col z-40">
+            <div class="p-6 border-b border-slate-100 flex items-center gap-3">
+                <div class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center text-white text-xl shadow-lg"><i class="fa-solid fa-layer-group"></i></div>
+                <div>
+                    <h1 class="font-bold text-slate-900">PetaCAD Web</h1>
+                    <p class="text-[10px] text-slate-400">GIS-TO-CAD CONVERTER</p>
                 </div>
             </div>
+            <nav class="p-4 space-y-1">
+                <a href="#" class="flex items-center gap-3 px-4 py-3 bg-blue-50 text-blue-600 rounded-xl text-sm font-semibold"><i class="fa-solid fa-map-location-dot"></i> Peta - CAD Converter</a>
+                <a href="#" onclick="openSymbolConfigurator()" class="flex items-center gap-3 px-4 py-3 text-slate-600 hover:bg-slate-50 rounded-xl text-sm font-medium"><i class="fa-solid fa-gear"></i> Library Simbol</a>
+            </nav>
         </aside>
 
-        <!-- STREAMING_CHUNK: Creating Map & Control Sidebar Layouts -->
-        <main class="flex-1 flex flex-col md:flex-row relative overflow-hidden">
+        <!-- Main Content -->
+        <main class="flex-1 relative h-full">
+            <div id="map" class="w-full h-full"></div>
             
-            <!-- Map Layer -->
-            <div class="flex-1 relative h-full">
-                <!-- Floating Header -->
-                <div class="absolute top-4 left-4 right-4 bg-white/95 backdrop-blur shadow-md rounded-2xl p-4 flex items-center justify-between z-[400] border border-slate-200/50">
-                    <div class="flex items-center gap-2">
-                        <span class="font-bold text-slate-800 text-sm">PetaCAD Web Pro</span>
-                        <span class="text-[10px] text-blue-600 font-semibold bg-blue-50 px-2.5 py-1 rounded-full uppercase">WGS84 ➔ UTM CAD</span>
-                    </div>
-                    <div class="flex items-center gap-3">
-                        <button id="btnSatellite" class="text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-lg transition flex items-center gap-1.5">
-                            <i class="fa-solid fa-satellite"></i> <span>Satelit Google</span>
-                        </button>
-                    </div>
+            <!-- Controls Panel -->
+            <div class="absolute right-4 top-4 w-[360px] bg-white/95 backdrop-blur shadow-2xl rounded-3xl border border-slate-200 p-5 z-[500] space-y-4">
+                <div class="flex items-center justify-between">
+                    <h2 class="font-bold text-slate-900">Konfigurasi CAD</h2>
+                    <span class="text-[10px] font-bold text-emerald-600 px-2 py-1 bg-emerald-50 rounded-full animate-pulse">ONLINE</span>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-2">
+                    <button id="btnDraw" class="bg-slate-900 text-white text-xs font-bold py-3 rounded-xl hover:bg-slate-800 transition">Gambar Area</button>
+                    <label class="bg-blue-600 text-white text-xs font-bold py-3 rounded-xl cursor-pointer text-center hover:bg-blue-700 transition">
+                        Import KML
+                        <input type="file" id="kmlFileInput" accept=".kml" class="hidden">
+                    </label>
                 </div>
 
-                <!-- Leaflet Div -->
-                <div id="map" class="w-full h-full"></div>
-            </div>
-
-            <!-- Right Sidebar / Floating Settings Control Card -->
-            <div class="w-full md:w-[380px] p-4 bg-transparent absolute md:relative right-0 top-16 md:top-0 bottom-0 pointer-events-none z-[400] flex flex-col justify-start">
-                <div class="bg-white/95 backdrop-blur-md shadow-2xl rounded-3xl border border-slate-200/60 p-5 pointer-events-auto flex flex-col gap-4 max-h-[85vh] overflow-y-auto">
-                    
-                    <!-- Card Brand Header -->
-                    <div class="flex items-start justify-between">
-                        <div class="flex items-center gap-2">
-                            <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white text-sm font-bold shadow-md shadow-blue-200">
-                                <i class="fa-solid fa-layer-group"></i>
-                            </div>
-                            <div>
-                                <h2 class="font-bold text-slate-900 text-sm leading-tight">Konfigurasi CAD</h2>
-                                <p class="text-[10px] text-slate-400">peta-cad • real-time</p>
-                            </div>
-                        </div>
-                        <span class="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2.5 py-1 rounded-full flex items-center gap-1">
-                            <span class="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-ping"></span> Online
-                        </span>
-                    </div>
-
-                    <hr class="border-slate-100">
-
-                    <!-- Control Buttons -->
-                    <div class="grid grid-cols-2 gap-2 bg-slate-100 p-1.5 rounded-xl">
-                        <button id="btnDraw" class="bg-slate-900 text-white text-xs font-semibold py-2 px-3 rounded-lg flex items-center justify-center gap-1.5 shadow hover:bg-slate-800 transition">
-                            <i class="fa-solid fa-square-envelope"></i> Gambar Area
-                        </button>
-                        <label class="bg-white text-slate-700 hover:text-slate-950 hover:bg-slate-50 border border-slate-200 text-xs font-semibold py-2 px-3 rounded-lg flex items-center justify-center gap-1.5 shadow-sm transition cursor-pointer text-center">
-                            <i class="fa-solid fa-file-import"></i> <span>Import KML</span>
-                            <input type="file" id="kmlFileInput" accept=".kml" class="hidden">
-                        </label>
-                    </div>
-
-                    <!-- KML Status Banner -->
-                    <div id="kmlBanner" class="hidden bg-purple-50 border border-purple-100 rounded-xl p-3 flex items-start gap-2.5 text-xs text-purple-800">
-                        <i class="fa-solid fa-circle-check mt-0.5 text-purple-600 animate-bounce"></i>
-                        <div>
-                            <span class="font-bold block" id="kmlFileName">kml_file.kml</span>
-                            <span class="text-[10px] opacity-90" id="kmlFileStats">Menemukan 0 Titik & 0 Jalur</span>
-                        </div>
-                    </div>
-
-                    <!-- Coordinate Display Panel -->
-                    <div class="bg-slate-50 p-3 rounded-xl border border-slate-100">
-                        <span class="text-[10px] font-bold text-slate-400 block mb-2 uppercase tracking-wider">Batas Koordinat Seleksi (WGS84)</span>
-                        <div class="grid grid-cols-2 gap-x-4 gap-y-1.5 text-xs text-slate-700 font-mono">
-                            <div><strong>N:</strong> <span id="valNorth" class="text-blue-600">-6.88650</span></div>
-                            <div><strong>S:</strong> <span id="valSouth" class="text-blue-600">-6.89650</span></div>
-                            <div><strong>W:</strong> <span id="valWest" class="text-blue-600">107.60560</span></div>
-                            <div><strong>E:</strong> <span id="valEast" class="text-blue-600">107.61560</span></div>
-                        </div>
-                    </div>
-
-                    <!-- Layer Checkboxes -->
-                    <div class="space-y-2 pt-1">
-                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Opsi Lapisan Layer AutoCAD</span>
-                        <div class="space-y-1.5">
-                            <label class="flex items-center justify-between p-2.5 bg-slate-50 border border-slate-100 rounded-xl text-xs cursor-pointer hover:bg-slate-100 transition">
-                                <div class="flex items-center gap-2">
-                                    <input type="checkbox" id="chkRoads" checked class="rounded border-slate-300 text-blue-600 focus:ring-blue-500">
-                                    <span class="font-medium text-slate-700">Jalan Raya (Layer: JALAN)</span>
-                                </div>
-                                <span class="text-[10px] text-slate-400 font-mono bg-white px-2 py-0.5 rounded border border-slate-200">WHITE</span>
-                            </label>
-                            <label class="flex items-center justify-between p-2.5 bg-slate-50 border border-slate-100 rounded-xl text-xs cursor-pointer hover:bg-slate-100 transition">
-                                <div class="flex items-center gap-2">
-                                    <input type="checkbox" id="chkBuildings" checked class="rounded border-slate-300 text-blue-600 focus:ring-blue-500">
-                                    <span class="font-medium text-slate-700">Bangunan (Layer: BANGUNAN)</span>
-                                </div>
-                                <span class="text-[10px] text-red-500 font-mono bg-white px-2 py-0.5 rounded border border-slate-200">RED</span>
-                            </label>
-                            <label class="flex items-center justify-between p-2.5 bg-slate-50 border border-slate-100 rounded-xl text-xs cursor-pointer hover:bg-slate-100 transition">
-                                <div class="flex items-center gap-2">
-                                    <input type="checkbox" id="chkWater" checked class="rounded border-slate-300 text-blue-600 focus:ring-blue-500">
-                                    <span class="font-medium text-slate-700">Sungai & Aliran Air (Layer: SUNGAI)</span>
-                                </div>
-                                <span class="text-[10px] text-blue-500 font-mono bg-white px-2 py-0.5 rounded border border-slate-200">BLUE</span>
-                            </label>
-                            <label class="flex items-center justify-between p-2.5 bg-slate-50 border border-slate-100 rounded-xl text-xs cursor-pointer hover:bg-slate-100 transition">
-                                <div class="flex items-center gap-2">
-                                    <input type="checkbox" id="chkKml" checked class="rounded border-slate-300 text-blue-600 focus:ring-blue-500">
-                                    <span class="font-medium text-slate-700">Garis/Ikon KML (Layer: IMPORT)</span>
-                                </div>
-                                <span class="text-[10px] text-purple-500 font-mono bg-white px-2 py-0.5 rounded border border-slate-200">MAGENTA</span>
-                            </label>
-                        </div>
-                    </div>
-
-                    <!-- Action Button -->
-                    <button id="btnDownload" class="w-full bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold py-3.5 px-4 rounded-2xl shadow-lg shadow-blue-200 hover:shadow-xl transition flex items-center justify-center gap-2 mt-2">
-                        <i class="fa-solid fa-download"></i> UNDUH PETA DAN JADIKAN DXF
-                    </button>
-                    
+                <div class="bg-slate-50 p-3 rounded-xl border font-mono text-[11px] text-slate-600">
+                    <p>N: <span id="valNorth">-6.88650</span> | S: <span id="valSouth">-6.89650</span></p>
+                    <p>W: <span id="valWest">107.60560</span> | E: <span id="valEast">107.61560</span></p>
                 </div>
+
+                <div class="space-y-2">
+                    <label class="flex items-center justify-between text-xs font-medium"><input type="checkbox" id="chkRoads" checked> Jalan Raya (Layer: JALAN)</label>
+                    <label class="flex items-center justify-between text-xs font-medium"><input type="checkbox" id="chkBuildings" checked> Bangunan (Layer: BANGUNAN)</label>
+                    <label class="flex items-center justify-between text-xs font-medium"><input type="checkbox" id="chkWater" checked> Sungai (Layer: SUNGAI)</label>
+                    <label class="flex items-center justify-between text-xs font-medium"><input type="checkbox" id="chkKml" checked> KML (Layer: IMPORT)</label>
+                </div>
+
+                <button id="btnDownload" class="w-full bg-blue-600 text-white text-xs font-bold py-4 rounded-2xl hover:bg-blue-700 transition shadow-lg shadow-blue-200">UNDUH PETA (DXF R12)</button>
             </div>
         </main>
     </div>
 
-    <!-- STREAMING_CHUNK: Integrating Loading & Success Dialog Overlays -->
-    <!-- Loading Overlay Screen -->
-    <div id="loadingOverlay" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[1000] flex items-center justify-center p-4">
-        <div class="bg-white p-6 rounded-2xl shadow-xl max-w-sm w-full text-center flex flex-col items-center gap-4 border border-slate-100">
-            <div class="relative w-16 h-16 flex items-center justify-center">
-                <div class="absolute inset-0 border-4 border-slate-100 rounded-full"></div>
-                <div class="absolute inset-0 border-4 border-blue-600 rounded-full border-t-transparent animate-spin"></div>
-                <i class="fa-solid fa-map-location-dot text-blue-600 text-xl animate-pulse"></i>
-            </div>
-            <div>
-                <h3 id="loaderTitle" class="font-bold text-slate-900 text-sm">Menghubungi Server Overpass...</h3>
-                <p id="loaderSubtitle" class="text-xs text-slate-400 mt-1">Mengambil koordinat spatial jalan & bangunan</p>
-            </div>
-            <div class="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
-                <div id="loaderBar" class="bg-blue-600 h-full w-0 transition-all duration-300"></div>
-            </div>
+    <!-- Modals & Scripts -->
+    <div id="loadingOverlay" class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-[1000] flex items-center justify-center text-white font-bold">Memproses CAD...</div>
+    <div id="successModal" class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-[1000] flex items-center justify-center p-4">
+        <div class="bg-white p-8 rounded-3xl text-center max-w-sm">
+            <h3 class="font-bold text-lg mb-2">Sukses!</h3>
+            <p class="text-sm text-slate-600 mb-6">File DXF R12 berhasil dibuat.</p>
+            <button onclick="document.getElementById('successModal').classList.add('hidden')" class="bg-slate-900 text-white px-6 py-2 rounded-xl">Selesai</button>
         </div>
     </div>
 
-    <!-- Success Output Modal -->
-    <div id="successModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[1000] flex items-center justify-center p-4">
-        <div class="bg-white p-6 rounded-3xl shadow-2xl max-w-sm w-full text-center flex flex-col items-center gap-4 border border-slate-100">
-            <div class="w-12 h-12 bg-emerald-50 text-emerald-500 rounded-full flex items-center justify-center text-xl shadow-inner">
-                <i class="fa-solid fa-circle-check"></i>
-            </div>
-            <div>
-                <h3 class="font-bold text-slate-900 text-sm">File DXF Berhasil Dibuat!</h3>
-                <p class="text-xs text-slate-400 mt-1">Format DXF R12 yang stabil berhasil diunduh dan siap dibuka langsung di AutoCAD Anda.</p>
-            </div>
-            <div class="bg-slate-50 w-full p-4 rounded-2xl border border-slate-100 text-left text-xs space-y-1.5 text-slate-600 font-medium">
-                <div><strong>Nama File:</strong> <span class="font-mono text-blue-600 text-[11px]" id="modalFileName">petacad_output.dxf</span></div>
-                <div><strong>Format Sistem:</strong> <span class="font-semibold text-[11px]" id="modalProj">AutoCAD DXF R12 (Skala Meter)</span></div>
-                <div><strong>Total Objek Gambar:</strong> <span id="modalStats" class="font-bold text-slate-800">0 Geometri Vektor</span></div>
-            </div>
-            <button onclick="closeSuccessModal()" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs py-3 rounded-xl transition">
-                SELESAI & KEMBALI
-            </button>
-        </div>
-    </div>
-
-    <!-- Symbol Library Config Modal -->
-    <div id="symbolModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[1000] flex items-center justify-center p-4">
-        <div class="bg-white rounded-3xl shadow-2xl max-w-4xl w-full h-[80vh] flex flex-col overflow-hidden border border-slate-100">
-            <!-- Modal Header -->
-            <div class="p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50">
-                <div class="flex items-center gap-2">
-                    <i class="fa-solid fa-images text-blue-600 text-lg"></i>
-                    <h3 class="font-bold text-slate-900 text-md">SETTINGS & SYMBOL LIBRARY CONFIGURATOR</h3>
-                </div>
-                <div class="flex items-center gap-2">
-                    <button onclick="closeSymbolConfigurator()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold text-xs px-4 py-2 rounded-xl transition">Cancel</button>
-                    <button onclick="saveSymbolConfigAndRefresh()" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-xs px-4 py-2 rounded-xl transition shadow-md shadow-emerald-200">💾 Save Changes</button>
-                </div>
-            </div>
-            <!-- Modal Content Body -->
-            <div class="flex-1 flex overflow-hidden">
-                <!-- Sidebar left list -->
-                <div class="w-1/3 border-r border-slate-100 p-4 overflow-y-auto bg-slate-50">
-                    <span class="text-[10px] font-bold text-slate-400 block mb-3 uppercase tracking-wider">Daftar Simbol</span>
-                    <div class="space-y-2" id="symbolListContainer">
-                        <!-- Filled dynamically -->
-                    </div>
-                </div>
-                <!-- Editor right panel -->
-                <div class="flex-1 p-6 overflow-y-auto" id="symbolEditorForm">
-                    <!-- Form template -->
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Custom Toast Notification -->
-    <div id="toast" class="fixed bottom-6 left-6 bg-slate-900/95 backdrop-blur text-white text-xs px-4 py-3 rounded-xl shadow-lg border border-slate-800 transition-all duration-300 transform translate-y-20 opacity-0 z-[2000] flex items-center gap-2">
-        <i class="fa-solid fa-circle-info text-blue-400"></i>
-        <span id="toastText">Pemberitahuan sistem</span>
-    </div>
-
-    <!-- Leaflet JS & Draw Plugin -->
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.js"></script>
-
-    <!-- STREAMING_CHUNK: Declaring Core Javascript Variables & Leaflet Engine Initialization -->
     <script>
-        const defaultLat = -6.89150;
-        const defaultLon = 107.61060;
-        let satelliteMode = false;
-        let activeSymbolKey = "ODP";
-
-        // Global Symbol Library State
-        const symbolLibrary = {
-            "ODC": { name: "ODC_CABINET", shape: "Triangle", color_dxf: 1, color_map: "#ef4444", keywords: ["odc", "cabinet", "rk", "feeder"] },
-            "ODP": { name: "ODP_BOX", shape: "Target Circle", color_dxf: 1, color_map: "#ef4444", keywords: ["odp", "fat", "distribution"] },
-            "TE": { name: "TE_POLE", shape: "Circle Cross", color_dxf: 2, color_map: "#eab308", keywords: ["te", "tiang listrik", "pole_electric"] },
-            "TN": { name: "TN_POLE", shape: "Solid Circle", color_dxf: 1, color_map: "#ef4444", keywords: ["tn", "tiang telkom", "pole_telecom"] },
-            "OLT": { name: "OLT_STATION", shape: "Box X", color_dxf: 6, color_map: "#d946ef", keywords: ["olt", "central_office", "co", "headend"] },
-            "JC": { name: "JC_SPLICE", shape: "Circle Slash", color_dxf: 4, color_map: "#06b6d4", keywords: ["jc", "joint", "closure", "splice", "suntik"] }
-        };
-
-        const map = L.map('map', { zoomControl: false }).setView([defaultLat, defaultLon], 15);
-
-        const streetTiles = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            maxZoom: 19,
-            attribution: '© OpenStreetMap contributors'
-        }).addTo(map);
-
-        const satelliteTiles = L.tileLayer('https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
-            maxZoom: 21,
-            attribution: '© Google Satellite'
-        });
-
-        L.control.zoom({ position: 'bottomleft' }).addTo(map);
-
+        const map = L.map('map').setView([-6.8915, 107.6106], 15);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap' }).addTo(map);
+        
         const drawnItems = new L.FeatureGroup();
         map.addLayer(drawnItems);
-
-        const drawControl = new L.Control.Draw({
-            edit: { featureGroup: drawnItems, remove: true },
-            draw: {
-                polygon: false, polyline: false, circle: false, marker: false, circlemarker: false,
-                rectangle: {
-                    shapeOptions: { color: '#2563eb', weight: 2, fillOpacity: 0.1, dashArray: '5, 5' }
-                }
-            }
-        });
+        const drawControl = new L.Control.Draw({ edit: { featureGroup: drawnItems }, draw: { polygon: false, polyline: false, circle: false, marker: false, circlemarker: false, rectangle: true } });
         map.addControl(drawControl);
 
-        const initialBounds = L.latLngBounds([-6.89650, 107.60560], [-6.88650, 107.61560]);
-        const initialRect = L.rectangle(initialBounds, {
-            color: '#2563eb', weight: 2, fillOpacity: 0.1, dashArray: '5, 5'
-        }).addTo(drawnItems);
+        map.on(L.Draw.Event.CREATED, (e) => { drawnItems.clearLayers(); drawnItems.addLayer(e.layer); updateCoordTexts(e.layer.getBounds()); });
 
-        updateCoordinateFields(initialBounds);
-
-        map.on(L.Draw.Event.CREATED, function (e) {
-            drawnItems.clearLayers();
-            const layer = e.layer;
-            drawnItems.addLayer(layer);
-            updateCoordinateFields(layer.getBounds());
-            showInfoToast("Batas koordinat baru berhasil terpasang!");
-        });
-
-        map.on(L.Draw.Event.EDITED, function (e) {
-            e.layers.eachLayer(function (layer) {
-                updateCoordinateFields(layer.getBounds());
-            });
-        });
-
-        document.getElementById('btnDraw').addEventListener('click', () => {
-            new L.Draw.Rectangle(map, drawControl.options.draw.rectangle).enable();
-            showInfoToast("Klik dan seret mouse pada peta untuk menggambar kotak!");
-        });
-
-        document.getElementById('btnSatellite').addEventListener('click', () => {
-            if (!satelliteMode) {
-                map.removeLayer(streetTiles);
-                satelliteTiles.addTo(map);
-                document.getElementById('btnSatellite').innerHTML = `<i class="fa-solid fa-map"></i> <span>Peta Biasa</span>`;
-                satelliteMode = true;
-                showInfoToast("Tampilan peta diubah ke Satelit Google.");
-            } else {
-                map.removeLayer(satelliteTiles);
-                streetTiles.addTo(map);
-                document.getElementById('btnSatellite').innerHTML = `<i class="fa-solid fa-satellite"></i> <span>Satelit Google</span>`;
-                satelliteMode = false;
-                showInfoToast("Tampilan peta diubah ke Peta Jalan.");
-            }
-        });
-
-        function updateCoordinateFields(bounds) {
+        function updateCoordTexts(bounds) {
             document.getElementById('valNorth').innerText = bounds.getNorth().toFixed(5);
             document.getElementById('valSouth').innerText = bounds.getSouth().toFixed(5);
             document.getElementById('valWest').innerText = bounds.getWest().toFixed(5);
             document.getElementById('valEast').innerText = bounds.getEast().toFixed(5);
         }
 
-        function showInfoToast(text) {
-            const toast = document.getElementById('toast');
-            document.getElementById('toastText').innerText = text;
-            toast.classList.remove('translate-y-20', 'opacity-0');
-            toast.classList.add('translate-y-0', 'opacity-100');
-            setTimeout(() => {
-                toast.classList.remove('translate-y-0', 'opacity-100');
-                toast.classList.add('translate-y-20', 'opacity-0');
-            }, 3000);
-        }
-
-        // STREAMING_CHUNK: Managing Symbol Configurator UI Interactions
-        function openSymbolConfigurator() {
-            document.getElementById('symbolModal').classList.remove('hidden');
-            renderSymbolList();
-            renderSymbolForm(activeSymbolKey);
-        }
-
-        function closeSymbolConfigurator() {
-            document.getElementById('symbolModal').classList.add('hidden');
-        }
-
-        function renderSymbolList() {
-            const container = document.getElementById('symbolListContainer');
-            container.innerHTML = "";
-            Object.keys(symbolLibrary).forEach(key => {
-                const sym = symbolLibrary[key];
-                const activeClass = (key === activeSymbolKey) ? 'bg-blue-50 border-blue-500 text-blue-600' : 'bg-white border-slate-100 hover:bg-slate-50 text-slate-700';
-                container.innerHTML += `
-                    <div onclick="selectSymbol('${key}')" class="p-3 border-2 rounded-xl text-xs font-semibold cursor-pointer transition flex items-center justify-between ${activeClass}">
-                        <span>${key} (${sym.name})</span>
-                        <span class="w-3 h-3 rounded-full" style="background-color: ${sym.color_map}"></span>
-                    </div>
-                `;
-            });
-        }
-
-        function selectSymbol(key) {
-            saveCurrentFormState();
-            activeSymbolKey = key;
-            renderSymbolList();
-            renderSymbolForm(key);
-        }
-
-        function renderSymbolForm(key) {
-            const sym = symbolLibrary[key];
-            const container = document.getElementById('symbolEditorForm');
-            container.innerHTML = `
-                <div class="space-y-4">
-                    <h4 class="font-bold text-slate-900 text-sm border-b pb-2 uppercase tracking-wide">⚙️ Edit Simbol: ${key}</h4>
-                    <div>
-                        <label class="text-[10px] font-bold text-slate-400 block mb-1">NAMA LAYER DXF</label>
-                        <input id="editLayerName" type="text" class="w-full bg-slate-50 border border-slate-200 text-xs rounded-xl p-2.5 font-mono" value="${sym.name}">
-                    </div>
-                    <div>
-                        <label class="text-[10px] font-bold text-slate-400 block mb-1">BENTUK GEOMETRI AUTOCAD</label>
-                        <select id="editShape" class="w-full bg-slate-50 border border-slate-200 text-xs rounded-xl p-2.5 font-medium">
-                            <option value="Target Circle" ${sym.shape === 'Target Circle' ? 'selected' : ''}>Target Circle (ODP)</option>
-                            <option value="Triangle" ${sym.shape === 'Triangle' ? 'selected' : ''}>Triangle (ODC)</option>
-                            <option value="Circle Cross" ${sym.shape === 'Circle Cross' ? 'selected' : ''}>Circle Cross (Tiang TE)</option>
-                            <option value="Solid Circle" ${sym.shape === 'Solid Circle' ? 'selected' : ''}>Solid Circle (Tiang TN)</option>
-                            <option value="Box X" ${sym.shape === 'Box X' ? 'selected' : ''}>Box X (OLT)</option>
-                            <option value="Circle Slash" ${sym.shape === 'Circle Slash' ? 'selected' : ''}>Circle Slash (Joint Closure)</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="text-[10px] font-bold text-slate-400 block mb-1">WARNA DXF (COLOR INDEX)</label>
-                        <select id="editColorDxf" class="w-full bg-slate-50 border border-slate-200 text-xs rounded-xl p-2.5 font-medium">
-                            <option value="1" ${sym.color_dxf === 1 ? 'selected' : ''}>1 - Red</option>
-                            <option value="2" ${sym.color_dxf === 2 ? 'selected' : ''}>2 - Yellow</option>
-                            <option value="3" ${sym.color_dxf === 3 ? 'selected' : ''}>3 - Green</option>
-                            <option value="4" ${sym.color_dxf === 4 ? 'selected' : ''}>4 - Cyan</option>
-                            <option value="5" ${sym.color_dxf === 5 ? 'selected' : ''}>5 - Blue</option>
-                            <option value="6" ${sym.color_dxf === 6 ? 'selected' : ''}>6 - Magenta</option>
-                            <option value="7" ${sym.color_dxf === 7 ? 'selected' : ''}>7 - White</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="text-[10px] font-bold text-slate-400 block mb-1">WARNA DI PETA (HEX)</label>
-                        <input id="editColorMap" type="text" class="w-full bg-slate-50 border border-slate-200 text-xs rounded-xl p-2.5 font-mono" value="${sym.color_map}">
-                    </div>
-                    <div>
-                        <label class="text-[10px] font-bold text-slate-400 block mb-1">ATURAN KATA KUNCI PARSING KML (PISAH KOMA)</label>
-                        <input id="editKeywords" type="text" class="w-full bg-slate-50 border border-slate-200 text-xs rounded-xl p-2.5" value="${sym.keywords.join(', ')}">
-                    </div>
-                </div>
-            `;
-        }
-
-        function saveCurrentFormState() {
-            const editLayerName = document.getElementById('editLayerName');
-            if (!editLayerName) return;
-
-            const name = editLayerName.value.trim().toUpperCase();
-            const shape = document.getElementById('editShape').value;
-            const color_dxf = parseInt(document.getElementById('editColorDxf').value);
-            const color_map = document.getElementById('editColorMap').value.trim();
-            const rawKeywords = document.getElementById('editKeywords').value.split(",");
-            const keywords = rawKeywords.map(kw => kw.trim().toLowerCase()).filter(kw => kw.length > 0);
-
-            symbolLibrary[activeSymbolKey] = { name, shape, color_dxf, color_map, keywords };
-        }
-
-        function saveSymbolConfigAndRefresh() {
-            saveCurrentFormState();
-            closeSymbolConfigurator();
-            showInfoToast("Konfigurasi simbol library berhasil diperbarui!");
-            if (lastLoadedKmlText && lastLoadedKmlName) {
-                processKmlData(lastLoadedKmlName, lastLoadedKmlText);
-            }
-        }
-
-        // STREAMING_CHUNK: Processing Imported KML Files and Parsing coordinates
-        let parsedKmlPoints = [];
-        let parsedKmlPaths = [];
-        let lastLoadedKmlText = "";
-        let lastLoadedKmlName = "";
-
-        document.getElementById('kmlFileInput').addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (!file) return;
-
-            const reader = new FileReader();
-            reader.onload = function(evt) {
-                lastLoadedKmlText = evt.target.result;
-                lastLoadedKmlName = file.name;
-                processKmlData(file.name, lastLoadedKmlText);
-            };
-            reader.readAsText(file);
-        });
-
-        function getMarkerIconSvg(colorHex, shape) {
-            let innerSvg = "";
-            if (shape === "Target Circle") {
-                innerSvg = `<circle cx="16" cy="16" r="10" stroke="${colorHex}" stroke-width="2" fill="none"/>
-                            <circle cx="16" cy="16" r="4" fill="${colorHex}"/>
-                            <line x1="16" y1="2" x2="16" y2="30" stroke="${colorHex}" stroke-width="1.5"/>
-                            <line x1="2" y1="16" x2="30" y2="16" stroke="${colorHex}" stroke-width="1.5"/>`;
-            } else if (shape === "Triangle") {
-                innerSvg = `<polygon points="16,4 28,26 4,26" fill="${colorHex}" stroke="white" stroke-width="1.5"/>
-                            <line x1="16" y1="4" x2="16" y2="26" stroke="white" stroke-width="1"/>`;
-            } else if (shape === "Circle Cross") {
-                innerSvg = `<circle cx="16" cy="16" r="11" fill="${colorHex}" stroke="white" stroke-width="1.5"/>
-                            <line x1="16" y1="7" x2="16" y2="25" stroke="black" stroke-width="2"/>
-                            <line x1="7" y1="16" x2="25" y2="16" stroke="black" stroke-width="2"/>`;
-            } else if (shape === "Solid Circle") {
-                innerSvg = `<circle cx="16" cy="16" r="12" fill="${colorHex}" stroke="white" stroke-width="2"/>`;
-            } else if (shape === "Box X") {
-                innerSvg = `<rect x="5" y="5" width="22" height="22" fill="${colorHex}" stroke="black" stroke-width="2"/>
-                            <line x1="5" y1="5" x2="27" y2="27" stroke="white" stroke-width="2"/>
-                            <line x1="5" y1="27" x2="27" y2="5" stroke="white" stroke-width="2"/>`;
-            } else if (shape === "Circle Slash") {
-                innerSvg = `<circle cx="16" cy="16" r="12" fill="${colorHex}" stroke="white" stroke-width="2"/>
-                            <line x1="7" y1="25" x2="25" y2="7" stroke="white" stroke-width="3"/>`;
-            } else {
-                innerSvg = `<circle cx="16" cy="16" r="10" fill="#3b82f6" stroke="white" stroke-width="2"/>`;
-            }
-
-            const fullSvg = `
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
-                    ${innerSvg}
-                </svg>
-            `;
-            return 'data:image/svg+xml;utf8,' + encodeURIComponent(fullSvg);
-        }
-
-        function processKmlData(fileName, kmlText) {
-            try {
-                const parser = new DOMParser();
-                const xmlDoc = parser.parseFromString(kmlText, "text/xml");
-                
-                const placemarks = xmlDoc.getElementsByTagName("Placemark");
-                parsedKmlPoints = [];
-                parsedKmlPaths = [];
-                
-                let allLats = [];
-                let allLons = [];
-
-                for (let i = 0; i < placemarks.length; i++) {
-                    const pm = placemarks[i];
-                    const nameNode = pm.getElementsByTagName("name")[0];
-                    const name = nameNode ? nameNode.textContent.trim() : `Penanda ${i + 1}`;
-
-                    const point = pm.getElementsByTagName("Point")[0];
-                    if (point) {
-                        const coordNode = point.getElementsByTagName("coordinates")[0];
-                        if (coordNode) {
-                            const parts = coordNode.textContent.trim().split(",");
-                            if (parts.length >= 2) {
-                                const lon = parseFloat(parts[0].trim());
-                                const lat = parseFloat(parts[1].trim());
-                                
-                                const nameLower = name.toLowerCase();
-                                let detectedType = "DEFAULT";
-                                for (const symKey of Object.keys(symbolLibrary)) {
-                                    const sym = symbolLibrary[symKey];
-                                    for (const kw of sym.keywords) {
-                                        if (nameLower.includes(kw)) {
-                                            detectedType = symKey;
-                                            break;
-                                        }
-                                    }
-                                    if (detectedType !== "DEFAULT") break;
-                                }
-
-                                parsedKmlPoints.push({ lat, lon, name, type: detectedType });
-                                allLats.push(lat);
-                                allLons.push(lon);
-                            }
-                        }
-                    }
-
-                    const line = pm.getElementsByTagName("LineString")[0] || pm.getElementsByTagName("Polygon")[0];
-                    if (line) {
-                        const coordNode = line.getElementsByTagName("coordinates")[0];
-                        if (coordNode) {
-                            const coordStrings = coordNode.textContent.trim().split(/\s+/);
-                            const path = [];
-                            coordStrings.forEach(str => {
-                                const parts = str.split(",");
-                                if (parts.length >= 2) {
-                                    const lon = parseFloat(parts[0].trim());
-                                    const lat = parseFloat(parts[1].trim());
-                                    path.push([lat, lon]);
-                                    allLats.push(lat);
-                                    allLons.push(lon);
-                                }
-                            });
-                            if (path.length > 1) {
-                                parsedKmlPaths.push(path);
-                            }
-                        }
-                    }
-                }
-
-                if (allLats.length > 0) {
-                    drawnItems.clearLayers();
-                    
-                    parsedKmlPaths.forEach(path => {
-                        L.polyline(path, { color: '#d946ef', weight: 3 }).addTo(drawnItems);
-                    });
-
-                    parsedKmlPoints.forEach(pt => {
-                        const sym = symbolLibrary[pt.type] || { color_map: "#3b82f6", shape: "Default" };
-                        const iconUrl = getMarkerIconSvg(sym.color_map, sym.shape);
-                        const customIcon = L.icon({
-                            iconUrl: iconUrl,
-                            iconSize: [24, 24],
-                            iconAnchor: [12, 12]
-                        });
-
-                        L.marker([pt.lat, pt.lon], { icon: customIcon }).addTo(drawnItems)
-                            .bindTooltip(pt.name, { permanent: true, direction: 'right', className: 'bg-white/90 border border-slate-100 rounded px-1.5 py-0.5 text-slate-800 text-[9px] font-bold font-mono shadow-sm' });
-                    });
-
-                    const bounds = L.latLngBounds(allLats.map((lat, idx) => [lat, allLons[idx]]));
-                    map.fitBounds(bounds, { padding: [50, 50] });
-
-                    updateCoordinateFields(bounds);
-                    
-                    document.getElementById('kmlBanner').classList.remove('hidden');
-                    document.getElementById('kmlFileName').innerText = fileName;
-                    document.getElementById('kmlFileStats').innerText = `Ditemukan ${parsedKmlPoints.length} Titik & ${parsedKmlPaths.length} Jalur Kabel`;
-                    
-                    showInfoToast("Data KML berhasil dipetakan!");
-                } else {
-                    showInfoToast("Gagal menemukan koordinat valid di dalam KML.");
-                }
-
-            } catch (err) {
-                showInfoToast("Gagal membaca berkas KML: " + err.message);
-            }
-        }
-
-        // STREAMING_CHUNK: Implementing Matematical WGS84-to-UTM Georeference Projector
         function wgs84ToUtm(lat, lon) {
-            const a = 6378137.0; // WGS-84 semi-major axis (meters)
-            const f = 1.0 / 298.257223563; // WGS-84 flattening
-            const b = a * (1.0 - f);
-            const e = Math.sqrt(1.0 - (b * b) / (a * a));
-            const e2 = (e * e) / (1.0 - e * e);
-
-            const zone = Math.floor((lon + 180) / 6) + 1;
-            const lon0 = (zone * 6) - 183; // Central meridian of the zone
-            
-            const latRad = lat * Math.PI / 180;
-            const lonRad = lon * Math.PI / 180;
-            const lon0Rad = lon0 * Math.PI / 180;
-
-            const N = a / Math.sqrt(1.0 - e * e * Math.sin(latRad) * Math.sin(latRad));
-            const T = Math.tan(latRad) * Math.tan(latRad);
-            const C = e2 * Math.cos(latRad) * Math.cos(latRad);
+            const a = 6378137.0; const f = 1.0 / 298.257223563; const b = a * (1.0 - f); const e2 = (a*a - b*b) / (b*b);
+            const zone = Math.floor((lon + 180) / 6) + 1; const lon0 = (zone * 6) - 183;
+            const latRad = lat * Math.PI / 180; const lonRad = lon * Math.PI / 180; const lon0Rad = lon0 * Math.PI / 180;
+            const N = a / Math.sqrt(1.0 - (e2/(1+e2)) * Math.sin(latRad) * Math.sin(latRad));
+            const T = Math.tan(latRad) * Math.tan(latRad); const C = e2 * Math.cos(latRad) * Math.cos(latRad);
             const A = (lonRad - lon0Rad) * Math.cos(latRad);
-
-            // Meridional Arc Length Formula
-            const M = a * (
-                (1.0 - e*e/4.0 - 3.0*e*e*e*e/64.0 - 5.0*e*e*e*e*e*e/256.0) * latRad -
-                (3.0*e*e/8.0 + 3.0*e*e*e*e/32.0 + 45.0*e*e*e*e*e*e/1024.0) * Math.sin(2.0*latRad) +
-                (15.0*e*e*e*e/256.0 + 45.0*e*e*e*e*e*e/1024.0) * Math.sin(4.0*latRad) -
-                (35.0*e*e*e*e*e*e/3072.0) * Math.sin(6.0*latRad)
-            );
-
-            const k0 = 0.9996; // Scale factor
-            const utmEasting = 500000.0 + k0 * N * (A + (1.0 - T + C) * A*A*A / 6.0 + (5.0 - 18.0 * T + T*T + 72.0 * C - 58.0 * e2) * A*A*A*A*A / 120.0);
-            let utmNorthing = k0 * (M + N * Math.tan(latRad) * (A*A / 2.0 + (5.0 - T + 9.0 * C + 4.0 * C*C) * A*A*A*A / 24.0 + (61.0 - 58.0 * T + T*T + 600.0 * C - 330.0 * e2) * A*A*A*A*A*A / 720.0));
-            if (lat < 0) {
-                utmNorthing += 10000000.0; // Southern Hemisphere offset
-            }
-            return { x: utmEasting, y: utmNorthing };
+            const M = a * ((1.0 - e2/(4.0+4.0*e2)) * latRad - (3.0*e2/(8.0+8.0*e2)) * Math.sin(2.0*latRad));
+            const k0 = 0.9996;
+            const easting = 500000.0 + k0 * N * (A + (1.0 - T + C) * A*A*A / 6.0);
+            const northing = k0 * (M + N * Math.tan(latRad) * (A*A / 2.0));
+            return { x: easting, y: lat < 0 ? northing + 10000000.0 : northing };
         }
 
-        // STREAMING_CHUNK: Assembling Core DXF R12 Document Structure and Entities
-        function writeDxfContentR12(osmElements, config) {
-            const dxfLines = [];
-            let elementCount = 0;
-
-            function write(code, value) {
-                dxfLines.push(code.toString().trim());
-                dxfLines.push(value.toString().trim());
-            }
-
-            // 1. SECTION HEADER (R12 / AC1009)
-            write(0, "SECTION");
-            write(2, "HEADER");
-            write(9, "$ACADVER");
-            write(1, "AC1009");
-            write(0, "ENDSEC");
-
-            // 2. SECTION TABLES (LAYER DEFINITIONS WITH MANDATORY LINETYPE)
-            write(0, "SECTION");
-            write(2, "TABLES");
-            write(0, "TABLE");
-            write(2, "LAYER");
-            
-            const standardLayers = [
-                { name: "BORDER", color: 7 },
-                { name: "JALAN", color: 7 },
-                { name: "BANGUNAN", color: 1 },
-                { name: "SUNGAI", color: 5 },
-                { name: "IMPORT_KML", color: 6 },
-                { name: "TEKS_NAMA", color: 2 }
-            ];
-            
-            const dynamicLayers = [];
-            Object.keys(symbolLibrary).forEach(key => {
-                dynamicLayers.push({
-                    name: symbolLibrary[key].name,
-                    color: symbolLibrary[key].color_dxf
-                });
-            });
-
-            const allLayers = [...standardLayers, ...dynamicLayers];
-            write(70, allLayers.length);
-
-            allLayers.forEach(lyr => {
-                write(0, "LAYER");
-                write(2, lyr.name);
-                write(70, 64);
-                write(62, lyr.color);
-                write(6, "CONTINUOUS"); // Group code 6 is mandatory in R12 DXF
-            });
-
-            write(0, "ENDTAB");
-            write(0, "ENDSEC");
-
-            // 3. SECTION ENTITIES
-            write(0, "SECTION");
-            write(2, "ENTITIES");
-
-            function writeLine(layer, x1, y1, x2, y2) {
-                write(0, "LINE");
-                write(8, layer);
-                write(10, x1.toFixed(4));
-                write(20, y1.toFixed(4));
-                write(11, x2.toFixed(4));
-                write(21, y2.toFixed(4));
-                elementCount++;
-            }
-
-            function writeCircle(layer, cx, cy, r) {
-                write(0, "CIRCLE");
-                write(8, layer);
-                write(10, cx.toFixed(4));
-                write(20, cy.toFixed(4));
-                write(40, r.toFixed(4));
-                elementCount++;
-            }
-
-            function writeText(layer, x, y, height, textVal) {
-                write(0, "TEXT");
-                write(8, layer);
-                write(10, x.toFixed(4));
-                write(20, y.toFixed(4));
-                write(40, height.toFixed(4));
-                write(1, textVal);
-                elementCount++;
-            }
-
-            // A. TULIS GEOMETRI NYATA OPENSTREETMAP (JALAN, BANGUNAN, AIR)
-            osmElements.forEach(elem => {
-                const geom = elem.geometry;
-                if (!geom || geom.length < 2) return;
-
-                const tags = elem.tags || {};
-                const isJalan = tags.highway && config.roads;
-                const isBangunan = tags.building && config.buildings;
-                const isAir = (tags.waterway || tags.natural === 'water') && config.water;
-
-                if (!isJalan && !isBangunan && !isAir) return;
-
-                // Konversi seluruh titik derajat ke meter UTM secara presisi
-                const projectedPts = geom.map(pt => wgs84ToUtm(pt.lat, pt.lon));
-                const layer = isJalan ? "JALAN" : (isBangunan ? "BANGUNAN" : "SUNGAI");
-
-                // Menggambar garis bersambung untuk georeferensi yang mulus
-                for (let j = 0; j < projectedPts.length - 1; j++) {
-                    writeLine(layer, projectedPts[j].x, projectedPts[j].y, projectedPts[j+1].x, projectedPts[j+1].y);
-                }
-
-                // Tutup poligon untuk bangunan agar terbentuk kotak utuh
-                if (isBangunan && projectedPts.length > 2) {
-                    writeLine(layer, projectedPts[projectedPts.length - 1].x, projectedPts[projectedPts.length - 1].y, projectedPts[0].x, projectedPts[0].y);
-                }
-            });
-
-            // B. TULIS DYNAMIC SIMBOL ODP / TIANG DARI KML
-            if (config.kml && parsedKmlPoints.length > 0) {
-                parsedKmlPoints.forEach(pt => {
-                    const localPt = wgs84ToUtm(pt.lat, pt.lon);
-                    const sym = symbolLibrary[pt.type] || { name: "IMPORT_KML", shape: "Target Circle" };
-                    const layer = sym.name;
-                    const shape = sym.shape;
-
-                    if (shape === "Target Circle") {
-                        writeCircle(layer, localPt.x, localPt.y, 1.0);
-                        writeCircle(layer, localPt.x, localPt.y, 2.0);
-                        writeLine(layer, localPt.x - 2.5, localPt.y, localPt.x + 2.5, localPt.y);
-                        writeLine(layer, localPt.x, localPt.y - 2.5, localPt.x, localPt.y + 2.5);
-                    } else if (shape === "Triangle") {
-                        writeLine(layer, localPt.x, localPt.y + 2.0, localPt.x + 1.73, localPt.y - 1.0);
-                        writeLine(layer, localPt.x + 1.73, localPt.y - 1.0, localPt.x - 1.73, localPt.y - 1.0);
-                        writeLine(layer, localPt.x - 1.73, localPt.y - 1.0, localPt.x, localPt.y + 2.0);
-                        writeLine(layer, localPt.x, localPt.y + 2.0, localPt.x, localPt.y - 1.0);
-                    } else if (shape === "Circle Cross") {
-                        writeCircle(layer, localPt.x, localPt.y, 1.2);
-                        writeLine(layer, localPt.x - 1.5, localPt.y, localPt.x + 1.5, localPt.y);
-                        writeLine(layer, localPt.x, localPt.y - 1.5, localPt.x, localPt.y + 1.5);
-                    } else if (shape === "Solid Circle") {
-                        writeCircle(layer, localPt.x, localPt.y, 0.4);
-                        writeCircle(layer, localPt.x, localPt.y, 0.8);
-                        writeCircle(layer, localPt.x, localPt.y, 1.2);
-                    } else if (shape === "Box X") {
-                        writeLine(layer, localPt.x - 1.5, localPt.y - 1.5, localPt.x + 1.5, localPt.y - 1.5);
-                        writeLine(layer, localPt.x + 1.5, localPt.y - 1.5, localPt.x + 1.5, localPt.y + 1.5);
-                        writeLine(layer, localPt.x + 1.5, localPt.y + 1.5, localPt.x - 1.5, localPt.y + 1.5);
-                        writeLine(layer, localPt.x - 1.5, localPt.y + 1.5, localPt.x - 1.5, localPt.y - 1.5);
-                        writeLine(layer, localPt.x - 1.5, localPt.y - 1.5, localPt.x + 1.5, localPt.y + 1.5);
-                        writeLine(layer, localPt.x - 1.5, localPt.y + 1.5, localPt.x + 1.5, localPt.y - 1.5);
-                    } else if (shape === "Circle Slash") {
-                        writeCircle(layer, localPt.x, localPt.y, 1.5);
-                        writeLine(layer, localPt.x - 1.5, localPt.y - 1.5, localPt.x + 1.5, localPt.y + 1.5);
-                    }
-
-                    // Tulis Label Teks ODP / Tiang
-                    writeText("TEKS_NAMA", localPt.x + 2.2, localPt.y + 0.5, 1.5, pt.name);
-                });
-            }
-
-            // C. TULIS JALUR KABEL KML (Warna Magenta)
-            if (config.kml && parsedKmlPaths.length > 0) {
-                parsedKmlPaths.forEach(path => {
-                    for (let i = 0; i < path.length - 1; i++) {
-                        const pt1 = wgs84ToUtm(path[i][0], path[i][1]);
-                        const pt2 = wgs84ToUtm(path[i+1][0], path[i+1][1]);
-                        writeLine("IMPORT_KML", pt1.x, pt1.y, pt2.x, pt2.y);
-                    }
-                });
-            }
-
-            write(0, "ENDSEC");
-            write(0, "EOF");
-
-            const completeDxfStream = dxfLines.join("\r\n") + "\r\n";
-            return { dxf: completeDxfStream, elementCount };
-        }
-
-        // STREAMING_CHUNK: Integrating the Live Overpass API Spatial Downloader
-        document.getElementById('btnDownload').addEventListener('click', () => {
-            const loaderOverlay = document.getElementById('loadingOverlay');
-            const loaderTitle = document.getElementById('loaderTitle');
-            const loaderSubtitle = document.getElementById('loaderSubtitle');
-            const loaderBar = document.getElementById('loaderBar');
-
+        document.getElementById('btnDownload').addEventListener('click', async () => {
+            document.getElementById('loadingOverlay').classList.remove('hidden');
             const n = parseFloat(document.getElementById('valNorth').innerText);
             const s = parseFloat(document.getElementById('valSouth').innerText);
             const w = parseFloat(document.getElementById('valWest').innerText);
             const e = parseFloat(document.getElementById('valEast').innerText);
 
-            const config = {
-                roads: document.getElementById('chkRoads').checked,
-                buildings: document.getElementById('chkBuildings').checked,
-                water: document.getElementById('chkWater').checked,
-                kml: document.getElementById('chkKml').checked
-            };
+            const overpassQuery = `[out:json];(way["highway"](${s},${w},${n},${e});way["building"](${s},${w},${n},${e}););out geom;`;
+            const resp = await fetch("https://overpass-api.de/api/interpreter", { method: "POST", body: "data=" + encodeURIComponent(overpassQuery) });
+            const data = await resp.json();
 
-            loaderOverlay.classList.remove('hidden');
-            loaderBar.style.width = "10%";
-            loaderTitle.innerText = "Mengirim Query Overpass...";
-            loaderSubtitle.innerText = "Membuka sambungan ke server OpenStreetMap";
+            let dxf = "0\nSECTION\n2\nHEADER\n9\n$ACADVER\n1\nAC1009\n0\nENDSEC\n0\nSECTION\n2\nTABLES\n0\nTABLE\n2\nLAYER\n70\n2\n0\nLAYER\n2\nJALAN\n70\n0\n62\n7\n6\nCONTINUOUS\n0\nLAYER\n2\nBANGUNAN\n70\n0\n62\n1\n6\nCONTINUOUS\n0\nENDTAB\n0\nENDSEC\n0\nSECTION\n2\nENTITIES\n";
 
-            // Membuat query overpass dinamis sesuai area bounding box
-            const bbox = `${s},${w},${n},${e}`;
-            let layersQuery = "";
-            if (config.roads) layersQuery += `way["highway"](${bbox});`;
-            if (config.buildings) layersQuery += `way["building"](${bbox});`;
-            if (config.water) {
-                layersQuery += `way["waterway"](${bbox});`;
-                layersQuery += `way["natural"="water"](${bbox});`;
-            }
-
-            if (layersQuery === "") {
-                loaderOverlay.classList.add('hidden');
-                showInfoToast("Harap pilih minimal salah satu opsi lapisan layer!");
-                return;
-            }
-
-            const overpassUrl = "https://overpass-api.de/api/interpreter";
-            const fullQuery = `[out:json][timeout:90];(${layersQuery});out geom;`;
-
-            loaderBar.style.width = "30%";
-            loaderTitle.innerText = "Mengunduh Data Spasial Bumi...";
-            loaderSubtitle.innerText = "Menarik garis kontur jalan melengkung & aliran air";
-
-            fetch(overpassUrl, {
-                method: "POST",
-                body: "data=" + encodeURIComponent(fullQuery),
-                headers: { "Content-Type": "application/x-www-form-urlencoded" }
-            })
-            .then(res => {
-                if (!res.ok) throw new Error("Server sibuk. Silakan coba sesaat lagi.");
-                loaderBar.style.width = "70%";
-                loaderTitle.innerText = "Menerapkan Proyeksi UTM...";
-                loaderSubtitle.innerText = "Menghitung georeferensi derajat ke meter CAD";
-                return res.json();
-            })
-            .then(osmData => {
-                const elements = osmData.elements || [];
-                loaderBar.style.width = "90%";
-                loaderTitle.innerText = "Merakit Format DXF R12...";
-                loaderSubtitle.innerText = "Menyusun skema warna layer & simbol FTTx";
-
-                const outData = writeDxfContentR12(elements, config);
-
-                setTimeout(() => {
-                    loaderOverlay.classList.add('hidden');
-                    
-                    const blob = new Blob([outData.dxf], { type: 'application/dxf' });
-                    const link = document.createElement('a');
-                    link.href = URL.createObjectURL(blob);
-                    link.download = `PetaCAD_R12_Output_${Date.now()}.dxf`;
-                    document.body.appendChild(link);
-                    link.click();
-                    document.body.removeChild(link);
-
-                    document.getElementById('modalFileName').innerText = `PetaCAD_R12_Output_${Date.now()}.dxf`;
-                    document.getElementById('modalStats').innerText = `${outData.elementCount} Objek Geometri Vektor`;
-                    document.getElementById('successModal').classList.remove('hidden');
-                }, 800);
-            })
-            .catch(err => {
-                loaderOverlay.classList.add('hidden');
-                showInfoToast("Koneksi gagal: " + err.message);
+            data.elements.forEach(elem => {
+                if (elem.type !== "way" || !elem.geometry) return;
+                const layer = elem.tags.highway ? "JALAN" : "BANGUNAN";
+                const pts = elem.geometry.map(p => wgs84ToUtm(p.lat, p.lon));
+                for(let i=0; i<pts.length-1; i++){
+                    dxf += `0\nLINE\n8\n${layer}\n10\n${pts[i].x}\n20\n${pts[i].y}\n11\n${pts[i+1].x}\n21\n${pts[i+1].y}\n`;
+                }
             });
-        });
 
-        function closeSuccessModal() {
-            document.getElementById('successModal').classList.add('hidden');
-        }
+            dxf += "0\nENDSEC\n0\nEOF\n";
+            const blob = new Blob([dxf], { type: 'application/dxf' });
+            const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'peta.dxf'; a.click();
+            document.getElementById('loadingOverlay').classList.add('hidden');
+            document.getElementById('successModal').classList.remove('hidden');
+        });
     </script>
 </body>
 </html>
+```eof
