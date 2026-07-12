@@ -2,92 +2,88 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PetaCAD Web Pro - GIS to DXF</title>
+    <title>PetaCAD Web Pro</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style> body { font-family: 'Inter', sans-serif; } #map { height: 100%; z-index: 1; } </style>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.css"/>
 </head>
-<body class="bg-slate-50 h-screen flex flex-col">
+<body class="h-screen flex flex-col">
     <div class="bg-slate-900 text-white p-3 text-sm font-bold flex justify-between">
-        <span>PetaCAD Web - R12 Generator (w/ KML Support)</span>
+        <span>PetaCAD Web - Full Sync Mode</span>
         <span id="status" class="text-emerald-400">Siap</span>
     </div>
-    <div class="flex-1 flex overflow-hidden">
+    <div class="flex-1 flex">
         <div id="map" class="flex-1"></div>
-        <div class="w-80 bg-white p-6 border-l flex flex-col gap-4 overflow-y-auto">
-            <h2 class="font-bold text-lg">Konfigurasi CAD</h2>
-            <label class="w-full bg-blue-600 text-white py-2 rounded-lg font-bold text-center cursor-pointer hover:bg-blue-700">
-                Import KML
+        <div class="w-80 bg-white p-6 border-l space-y-4">
+            <button id="btnDraw" class="w-full bg-slate-800 text-white py-2 rounded-lg font-bold">Gambar Area Peta</button>
+            <label class="w-full bg-blue-600 text-white py-2 rounded-lg font-bold text-center cursor-pointer">Import KML
                 <input type="file" id="kmlInput" class="hidden" accept=".kml">
             </label>
-            <div id="kmlStatus" class="text-[10px] text-purple-600 p-2 bg-purple-50 rounded hidden"></div>
-            <hr>
-            <button id="btnDownload" class="w-full bg-emerald-600 text-white py-3 rounded-lg font-bold hover:bg-emerald-700 transition">Download DXF (R12)</button>
+            <button id="btnDownload" class="w-full bg-emerald-600 text-white py-3 rounded-lg font-bold">Download DXF (Peta + KML)</button>
         </div>
     </div>
-
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.js"></script>
     <script>
         const map = L.map('map').setView([-6.8915, 107.6106], 15);
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
-        
-        let kmlLayers = L.layerGroup().addTo(map);
-        let kmlData = { points: [], paths: [] };
+        const drawnItems = new L.FeatureGroup().addTo(map);
+        new L.Control.Draw({ draw: { polygon: false, polyline: false, circle: false, marker: false, rectangle: true }, edit: { featureGroup: drawnItems } }).addTo(map);
 
-        document.getElementById('kmlInput').onchange = function(e) {
+        let kmlData = { points: [], paths: [] };
+        let box = { n: -6.8865, s: -6.8965, w: 107.6056, e: 107.6156 };
+        map.on(L.Draw.Event.CREATED, (e) => { drawnItems.clearLayers().addLayer(e.layer); const b = e.layer.getBounds(); box = { n: b.getNorth(), s: b.getSouth(), w: b.getWest(), e: b.getEast() }; });
+
+        document.getElementById('kmlInput').onchange = (e) => {
             const reader = new FileReader();
-            reader.onload = function(evt) {
+            reader.onload = (evt) => {
                 const xml = new DOMParser().parseFromString(evt.target.result, "text/xml");
-                kmlData = { points: [], paths: [] }; kmlLayers.clearLayers();
+                kmlData = { points: [], paths: [] };
                 xml.querySelectorAll("Placemark").forEach(pm => {
                     const coords = pm.querySelector("coordinates")?.textContent.trim().split(" ");
                     if(coords) {
                         const pts = coords.map(c => c.split(",").map(Number));
-                        if(pts.length === 1) {
-                            kmlData.points.push({ lat: pts[0][1], lon: pts[0][0], name: pm.querySelector("name")?.textContent });
-                            L.marker([pts[0][1], pts[0][0]]).addTo(kmlLayers).bindPopup(pm.querySelector("name")?.textContent);
-                        } else {
-                            const latlngs = pts.map(p => [p[1], p[0]]);
-                            kmlData.paths.push(latlngs);
-                            L.polyline(latlngs, {color: 'purple'}).addTo(kmlLayers);
-                        }
+                        if(pts.length === 1) kmlData.points.push({ lat: pts[0][1], lon: pts[0][0], name: pm.querySelector("name")?.textContent || "P" });
+                        else kmlData.paths.push(pts.map(p => ({lat: p[1], lon: p[0]})));
                     }
                 });
-                document.getElementById('kmlStatus').classList.remove('hidden');
-                document.getElementById('kmlStatus').innerText = `KML: ${kmlData.points.length} Titik, ${kmlData.paths.length} Jalur (Peta Ter-update)`;
+                document.getElementById('status').innerText = "KML Dimuat!";
             };
             reader.readAsText(e.target.files[0]);
         };
 
         function wgs84ToUtm(lat, lon) {
-            const a = 6378137.0; const f = 1.0 / 298.257223563; const e2 = 2*f - f*f;
-            const zone = Math.floor((lon + 180) / 6) + 1; const lon0 = (zone * 6) - 183;
-            const latRad = lat * Math.PI / 180; const lonRad = lon * Math.PI / 180; const lon0Rad = lon0 * Math.PI / 180;
-            const N = a / Math.sqrt(1 - e2 * Math.sin(latRad)**2);
-            const A = (lonRad - lon0Rad) * Math.cos(latRad);
-            const M = a * ((1 - e2/4) * latRad - (3*e2/8) * Math.sin(2*latRad));
-            return { x: 500000 + 0.9996 * N * A, y: 0.9996 * M + (lat < 0 ? 10000000 : 0) };
+            const a = 6378137.0; const f = 1.0/298.257223563; const e2 = 2*f - f*f;
+            const z = Math.floor((lon + 180)/6)+1; const lon0 = (z*6)-183;
+            const lr = lat * Math.PI/180; const lor = lon * Math.PI/180; const l0r = lon0 * Math.PI/180;
+            const N = a/Math.sqrt(1-e2*Math.sin(lr)**2);
+            const A = (lor-l0r)*Math.cos(lr);
+            const M = a*((1-e2/4)*lr - (3*e2/8)*Math.sin(2*lr));
+            return { x: 500000 + 0.9996*N*A, y: 0.9996*M + (lat<0?10000000:0) };
         }
 
         document.getElementById('btnDownload').onclick = async () => {
-            document.getElementById('status').innerText = "Memproses...";
-            let dxf = "0\nSECTION\n2\nHEADER\n9\n$ACADVER\n1\nAC1009\n0\nENDSEC\n0\nSECTION\n2\nTABLES\n0\nTABLE\n2\nLAYER\n70\n2\n0\nLAYER\n2\nIMPORT_KML\n70\n0\n62\n6\n6\nCONTINUOUS\n0\nENDTAB\n0\nENDSEC\n0\nSECTION\n2\nENTITIES\n";
+            document.getElementById('status').innerText = "Mengambil Data Peta...";
+            const query = `[out:json];(way["highway"](${box.s},${box.w},${box.n},${box.e});way["building"](${box.s},${box.w},${box.n},${box.e}););out geom;`;
+            const res = await fetch("https://overpass-api.de/api/interpreter", { method: "POST", body: "data=" + encodeURIComponent(query) });
+            const data = await res.json();
 
-            kmlData.paths.forEach(path => {
-                const pts = path.map(p => wgs84ToUtm(p[0], p[1]));
-                for(let i=0; i<pts.length-1; i++) dxf += `0\nLINE\n8\nIMPORT_KML\n10\n${pts[i].x}\n20\n${pts[i].y}\n11\n${pts[i+1].x}\n21\n${pts[i+1].y}\n`;
+            let dxf = "0\nSECTION\n2\nHEADER\n9\n$ACADVER\n1\nAC1009\n0\nENDSEC\n0\nSECTION\n2\nTABLES\n0\nTABLE\n2\nLAYER\n70\n3\n0\nLAYER\n2\nJALAN\n70\n0\n62\n7\n0\nLAYER\n2\nBANGUNAN\n70\n0\n62\n1\n0\nLAYER\n2\nIMPORT_KML\n70\n0\n62\n6\n0\nENDTAB\n0\nENDSEC\n0\nSECTION\n2\nENTITIES\n";
+
+            data.elements.forEach(el => {
+                const layer = el.tags.highway ? "JALAN" : "BANGUNAN";
+                const pts = el.geometry.map(p => wgs84ToUtm(p.lat, p.lon));
+                for(let i=0; i<pts.length-1; i++) dxf += `0\nLINE\n8\n${layer}\n10\n${pts[i].x}\n20\n${pts[i].y}\n11\n${pts[i+1].x}\n21\n${pts[i+1].y}\n`;
             });
 
-            kmlData.points.forEach(pt => {
-                const utm = wgs84ToUtm(pt.lat, pt.lon);
-                dxf += `0\nCIRCLE\n8\nIMPORT_KML\n10\n${utm.x}\n20\n${utm.y}\n40\n1.5\n0\nTEXT\n8\nIMPORT_KML\n10\n${utm.x+2}\n20\n${utm.y+2}\n40\n2.0\n1\n${pt.name}\n`;
+            kmlData.paths.forEach(path => {
+                const pts = path.map(p => wgs84ToUtm(p.lat, p.lon));
+                for(let i=0; i<pts.length-1; i++) dxf += `0\nLINE\n8\nIMPORT_KML\n10\n${pts[i].x}\n20\n${pts[i].y}\n11\n${pts[i+1].x}\n21\n${pts[i+1].y}\n`;
             });
 
             dxf += "0\nENDSEC\n0\nEOF\n";
             const blob = new Blob([dxf.replace(/\n/g, "\r\n")], { type: 'application/dxf' });
-            const link = document.createElement('a'); link.href = URL.createObjectURL(blob); link.download = 'PetaCAD_KML.dxf'; link.click();
+            const link = document.createElement('a'); link.href = URL.createObjectURL(blob); link.download = 'PetaCAD_Lengkap.dxf'; link.click();
             document.getElementById('status').innerText = "Selesai!";
         };
     </script>
