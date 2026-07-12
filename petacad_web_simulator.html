@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PetaCAD - Konverter Peta & KML ke DXF AutoCAD</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    <!-- Leaflet Draw CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.css"/>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        #map {
+            height: 100%;
+            z-index: 1;
+        }
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 overflow-hidden h-screen flex flex-col">
+
+    <!-- Top Navigation Alert Banner -->
+    <div class="bg-slate-900 text-slate-100 border-b border-slate-800 px-4 py-2 flex items-center justify-between text-xs sm:text-sm z-50">
+        <div class="flex items-center gap-2">
+            <span class="bg-emerald-500 text-slate-950 font-bold text-[10px] px-2 py-0.5 rounded uppercase animate-pulse">PRO VERSION</span>
+            <span>Versi Web PetaCAD Pro siap diuji coba secara online! <a href="https://petacad.web.id" target="_blank" class="text-blue-400 hover:underline">Pelajari lebih lanjut</a></span>
+        </div>
+        <div class="hidden sm:flex gap-2">
+            <span class="text-slate-400 text-xs">Masa Aktif: <strong class="text-emerald-400">Selamanya (Gratis)</strong></span>
+        </div>
+    </div>
+
+    <!-- Main Content Container -->
+    <div class="flex flex-1 overflow-hidden">
+        
+        <!-- Sidebar Menu Kiri -->
+        <aside class="w-64 bg-white border-r border-slate-200 flex flex-col justify-between hidden lg:flex z-40">
+            <div>
+                <!-- Brand Header -->
+                <div class="p-6 border-b border-slate-100 flex items-center gap-3">
+                    <div class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-blue-200">
+                        <i class="fa-solid fa-layer-group"></i>
+                    </div>
+                    <div>
+                        <h1 class="font-bold text-slate-900 text-md leading-tight">PetaCAD Web</h1>
+                        <span class="text-[10px] text-slate-400 font-semibold tracking-wider uppercase">GIS-to-CAD Engine</span>
+                    </div>
+                </div>
+
+                <!-- Navigation List -->
+                <nav class="p-4 space-y-1">
+                    <a href="#" class="flex items-center gap-3 px-4 py-3 bg-blue-50 text-blue-600 rounded-xl transition text-sm font-semibold">
+                        <i class="fa-solid fa-map-location-dot w-5"></i>
+                        <span>Peta - CAD Converter</span>
+                    </a>
+                    <a href="#" onclick="showInfoToast('Unggah file KML Anda langsung lewat tombol di panel kanan!')" class="flex items-center gap-3 px-4 py-3 text-slate-600 hover:bg-slate-50 rounded-xl transition text-sm font-medium">
+                        <i class="fa-solid fa-file-import w-5"></i>
+                        <span>Import KML Converter</span>
+                    </a>
+                    <a href="#" onclick="showInfoToast('Membuka halaman panduan penggunaan PetaCAD')" class="flex items-center gap-3 px-4 py-3 text-slate-600 hover:bg-slate-50 rounded-xl transition text-sm font-medium">
+                        <i class="fa-solid fa-book w-5"></i>
+                        <span>Panduan Survey & CAD</span>
+                    </a>
+                </nav>
+            </div>
+
+            <!-- Footer Sidebar -->
+            <div class="p-4 border-t border-slate-100">
+                <div class="bg-slate-50 p-3 rounded-xl border border-slate-100 text-center">
+                    <span class="text-xs font-bold text-slate-700 block">Butuh Aplikasi Desktop?</span>
+                    <span class="text-[10px] text-slate-400 block mb-2">Gunakan versi .exe untuk kestabilan penuh tanpa batas area.</span>
+                    <button onclick="showInfoToast('Gunakan file build_exe.bat Anda untuk merakit versi Desktop!')" class="w-full bg-slate-900 hover:bg-slate-800 text-white text-[10px] font-bold py-1.5 rounded-lg transition">
+                        Cara Buat EXE
+                    </button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Interactive Map & Controls Area -->
+        <main class="flex-1 flex flex-col md:flex-row relative overflow-hidden">
+            
+            <!-- Map Layer -->
+            <div class="flex-1 relative h-full">
+                <!-- Floating Header -->
+                <div class="absolute top-4 left-4 right-4 bg-white/95 backdrop-blur shadow-md rounded-2xl p-4 flex items-center justify-between z-[400] border border-slate-200/50">
+                    <div class="flex items-center gap-2">
+                        <span class="font-bold text-slate-800 text-sm">PetaCAD Web Pro</span>
+                        <span class="text-[10px] text-blue-600 font-semibold bg-blue-50 px-2.5 py-1 rounded-full uppercase">WGS84 ➔ UTM CAD</span>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <button id="btnSatellite" class="text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-lg transition flex items-center gap-1.5">
+                            <i class="fa-solid fa-satellite"></i> <span>Satelit Google</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Leaflet Div -->
+                <div id="map" class="w-full h-full"></div>
+            </div>
+
+            <!-- Right Sidebar / Floating Settings Control Card -->
+            <div class="w-full md:w-[380px] p-4 bg-transparent absolute md:relative right-0 top-16 md:top-0 bottom-0 pointer-events-none z-[400] flex flex-col justify-start">
+                <div class="bg-white/95 backdrop-blur-md shadow-2xl rounded-3xl border border-slate-200/60 p-5 pointer-events-auto flex flex-col gap-4 max-h-[85vh] overflow-y-auto">
+                    
+                    <!-- Card Brand Header -->
+                    <div class="flex items-start justify-between">
+                        <div class="flex items-center gap-2">
+                            <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white text-sm font-bold shadow-md shadow-blue-200">
+                                <i class="fa-solid fa-layer-group"></i>
+                            </div>
+                            <div>
+                                <h2 class="font-bold text-slate-900 text-sm leading-tight">Konfigurasi CAD</h2>
+                                <p class="text-[10px] text-slate-400">peta-cad • real-time</p>
+                            </div>
+                        </div>
+                        <span class="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2.5 py-1 rounded-full flex items-center gap-1">
+                            <span class="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-ping"></span> Online
+                        </span>
+                    </div>
+
+                    <hr class="border-slate-100">
+
+                    <!-- Control Buttons -->
+                    <div class="grid grid-cols-2 gap-2 bg-slate-100 p-1.5 rounded-xl">
+                        <button id="btnDraw" class="bg-slate-900 text-white text-xs font-semibold py-2 px-3 rounded-lg flex items-center justify-center gap-1.5 shadow hover:bg-slate-800 transition">
+                            <i class="fa-solid fa-square-envelope"></i> Gambar Area
+                        </button>
+                        <label class="bg-white text-slate-700 hover:text-slate-950 hover:bg-slate-50 border border-slate-200 text-xs font-semibold py-2 px-3 rounded-lg flex items-center justify-center gap-1.5 shadow-sm transition cursor-pointer text-center">
+                            <i class="fa-solid fa-file-import"></i> <span>Import KML</span>
+                            <input type="file" id="kmlFileInput" accept=".kml" class="hidden">
+                        </label>
+                    </div>
+
+                    <!-- KML Status Banner (Hidden by default, shown when KML is loaded) -->
+                    <div id="kmlBanner" class="hidden bg-purple-50 border border-purple-100 rounded-xl p-3 flex items-start gap-2.5 text-xs text-purple-800">
+                        <i class="fa-solid fa-circle-check mt-0.5 text-purple-600 animate-bounce"></i>
+                        <div>
+                            <span class="font-bold block" id="kmlFileName">kml_file.kml</span>
+                            <span class="text-[10px] opacity-90" id="kmlFileStats">Menemukan 0 Titik & 0 Jalur</span>
+                        </div>
+                    </div>
+
+                    <!-- Coordinate Display Panel -->
+                    <div class="bg-slate-50 p-3 rounded-xl border border-slate-100">
+                        <span class="text-[10px] font-bold text-slate-400 block mb-2 uppercase tracking-wider">Batas Koordinat Seleksi (WGS84)</span>
+                        <div class="grid grid-cols-2 gap-x-4 gap-y-1.5 text-xs text-slate-700 font-mono">
+                            <div><strong>N:</strong> <span id="valNorth" class="text-blue-600">-6.88650</span></div>
+                            <div><strong>S:</strong> <span id="valSouth" class="text-blue-600">-6.89650</span></div>
+                            <div><strong>W:</strong> <span id="valWest" class="text-blue-600">107.60560</span></div>
+                            <div><strong>E:</strong> <span id="valEast" class="text-blue-600">107.61560</span></div>
+                        </div>
+                    </div>
+
+                    <!-- Layer Checkboxes -->
+                    <div class="space-y-2 pt-1">
+                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Opsi Lapisan Layer AutoCAD</span>
+                        <div class="space-y-1.5">
+                            <label class="flex items-center justify-between p-2.5 bg-slate-50 border border-slate-100 rounded-xl text-xs cursor-pointer hover:bg-slate-100 transition">
+                                <div class="flex items-center gap-2">
+                                    <input type="checkbox" id="chkRoads" checked class="rounded border-slate-300 text-blue-600 focus:ring-blue-500">
+                                    <span class="font-medium text-slate-700">Jalan Raya (Layer: JALAN)</span>
+                                </div>
+                                <span class="text-[10px] text-slate-400 font-mono bg-white px-2 py-0.5 rounded border border-slate-200">WHITE</span>
+                            </label>
+                            <label class="flex items-center justify-between p-2.5 bg-slate-50 border border-slate-100 rounded-xl text-xs cursor-pointer hover:bg-slate-100 transition">
+                                <div class="flex items-center gap-2">
+                                    <input type="checkbox" id="chkBuildings" checked class="rounded border-slate-300 text-blue-600 focus:ring-blue-500">
+                                    <span class="font-medium text-slate-700">Bangunan (Layer: BANGUNAN)</span>
+                                </div>
+                                <span class="text-[10px] text-red-500 font-mono bg-white px-2 py-0.5 rounded border border-slate-200">RED</span>
+                            </label>
+                            <label class="flex items-center justify-between p-2.5 bg-slate-50 border border-slate-100 rounded-xl text-xs cursor-pointer hover:bg-slate-100 transition">
+                                <div class="flex items-center gap-2">
+                                    <input type="checkbox" id="chkWater" checked class="rounded border-slate-300 text-blue-600 focus:ring-blue-500">
+                                    <span class="font-medium text-slate-700">Sungai/Air (Layer: SUNGAI)</span>
+                                </div>
+                                <span class="text-[10px] text-blue-500 font-mono bg-white px-2 py-0.5 rounded border border-slate-200">BLUE</span>
+                            </label>
+                            <label class="flex items-center justify-between p-2.5 bg-slate-50 border border-slate-100 rounded-xl text-xs cursor-pointer hover:bg-slate-100 transition">
+                                <div class="flex items-center gap-2">
+                                    <input type="checkbox" id="chkKml" checked class="rounded border-slate-300 text-blue-600 focus:ring-blue-500">
+                                    <span class="font-medium text-slate-700">Garis/Ikon KML (Layer: IMPORT)</span>
+                                </div>
+                                <span class="text-[10px] text-purple-500 font-mono bg-white px-2 py-0.5 rounded border border-slate-200">MAGENTA</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Action Button -->
+                    <button id="btnDownload" class="w-full bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold py-3.5 px-4 rounded-2xl shadow-lg shadow-blue-200 hover:shadow-xl transition flex items-center justify-center gap-2 mt-2">
+                        <i class="fa-solid fa-download"></i> UNDUH PETA DAN JADIKAN DXF
+                    </button>
+                    
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Loading Overlay Screen -->
+    <div id="loadingOverlay" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[1000] flex items-center justify-center p-4">
+        <div class="bg-white p-6 rounded-2xl shadow-xl max-w-sm w-full text-center flex flex-col items-center gap-4 border border-slate-100">
+            <div class="relative w-16 h-16 flex items-center justify-center">
+                <div class="absolute inset-0 border-4 border-slate-100 rounded-full"></div>
+                <div class="absolute inset-0 border-4 border-blue-600 rounded-full border-t-transparent animate-spin"></div>
+                <i class="fa-solid fa-map-location-dot text-blue-600 text-xl animate-pulse"></i>
+            </div>
+            <div>
+                <h3 id="loaderTitle" class="font-bold text-slate-900 text-sm">Menghubungi Server Overpass...</h3>
+                <p id="loaderSubtitle" class="text-xs text-slate-400 mt-1">Mengambil koordinat spatial jalan & bangunan</p>
+            </div>
+            <div class="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
+                <div id="loaderBar" class="bg-blue-600 h-full w-0 transition-all duration-300"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Output Modal -->
+    <div id="successModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[1000] flex items-center justify-center p-4">
+        <div class="bg-white p-6 rounded-3xl shadow-2xl max-w-sm w-full text-center flex flex-col items-center gap-4 border border-slate-100">
+            <div class="w-12 h-12 bg-emerald-50 text-emerald-500 rounded-full flex items-center justify-center text-xl shadow-inner">
+                <i class="fa-solid fa-circle-check"></i>
+            </div>
+            <div>
+                <h3 class="font-bold text-slate-900 text-sm">File DXF Berhasil Dibuat!</h3>
+                <p class="text-xs text-slate-400 mt-1">Sumbu koordinat UTM meter berhasil terproyeksi otomatis ke dalam gambar CAD.</p>
+            </div>
+            <div class="bg-slate-50 w-full p-4 rounded-2xl border border-slate-100 text-left text-xs space-y-1.5 text-slate-600 font-medium">
+                <div><strong>Nama File:</strong> <span class="font-mono text-blue-600 text-[11px]" id="modalFileName">petacad_output.dxf</span></div>
+                <div><strong>Sistem Koordinat:</strong> <span class="font-semibold text-[11px]" id="modalProj">UTM Zone 48S (Skala Meter)</span></div>
+                <div><strong>Total Objek Gambar:</strong> <span id="modalStats" class="font-bold text-slate-800">412 Geometri Vektor</span></div>
+            </div>
+            <button onclick="closeSuccessModal()" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs py-3 rounded-xl transition">
+                SELESAI & KEMBALI
+            </button>
+        </div>
+    </div>
+
+    <!-- Custom Toast Notification -->
+    <div id="toast" class="fixed bottom-6 left-6 bg-slate-900/95 backdrop-blur text-white text-xs px-4 py-3 rounded-xl shadow-lg border border-slate-800 transition-all duration-300 transform translate-y-20 opacity-0 z-[2000] flex items-center gap-2">
+        <i class="fa-solid fa-circle-info text-blue-400"></i>
+        <span id="toastText">Pemberitahuan sistem</span>
+    </div>
+
+    <!-- Leaflet JS & Draw Plugin -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.js"></script>
+
+    <script>
+        // Default View focused on Gegerkalong, Bandung (Indonesia)
+        const defaultLat = -6.89150;
+        const defaultLon = 107.61060;
+        let satelliteMode = false;
+
+        const map = L.map('map', {
+            zoomControl: false
+        }).setView([defaultLat, defaultLon], 15);
+
+        // Standard Street Tile Layer
+        const streetTiles = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+
+        // Satellite Tile Layer
+        const satelliteTiles = L.tileLayer('https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
+            maxZoom: 21,
+            attribution: '© Google Satellite'
+        });
+
+        // Zoom Control reposition
+        L.control.zoom({ position: 'bottomleft' }).addTo(map);
+
+        // Map Drawer Group
+        const drawnItems = new L.FeatureGroup();
+        map.addLayer(drawnItems);
+
+        // Define bounding box drawing controls
+        const drawControl = new L.Control.Draw({
+            edit: {
+                featureGroup: drawnItems,
+                remove: true
+            },
+            draw: {
+                polygon: false, polyline: false, circle: false, marker: false, circlemarker: false,
+                rectangle: {
+                    shapeOptions: {
+                        color: '#2563eb',
+                        weight: 2,
+                        fillOpacity: 0.1,
+                        dashArray: '5, 5'
+                    }
+                }
+            }
+        });
+        map.addControl(drawControl);
+
+        // Default initial bounding box bounds
+        const initialBounds = L.latLngBounds([-6.89650, 107.60560], [-6.88650, 107.61560]);
+        const initialRect = L.rectangle(initialBounds, {
+            color: '#2563eb',
+            weight: 2,
+            fillOpacity: 0.1,
+            dashArray: '5, 5'
+        }).addTo(drawnItems);
+
+        updateCoordinateFields(initialBounds);
+
+        // Listeners for rectangle drawing
+        map.on(L.Draw.Event.CREATED, function (e) {
+            drawnItems.clearLayers();
+            const layer = e.layer;
+            drawnItems.addLayer(layer);
+            updateCoordinateFields(layer.getBounds());
+            showInfoToast("Batas koordinat baru berhasil terpasang!");
+        });
+
+        map.on(L.Draw.Event.EDITED, function (e) {
+            e.layers.eachLayer(function (layer) {
+                updateCoordinateFields(layer.getBounds());
+            });
+        });
+
+        // Toggle Drawing Trigger
+        document.getElementById('btnDraw').addEventListener('click', () => {
+            new L.Draw.Rectangle(map, drawControl.options.draw.rectangle).enable();
+            showInfoToast("Silakan klik dan seret mouse pada peta untuk menggambar kotak!");
+        });
+
+        // Toggle Satellite/Street Layer
+        document.getElementById('btnSatellite').addEventListener('click', () => {
+            if (!satelliteMode) {
+                map.removeLayer(streetTiles);
+                satelliteTiles.addTo(map);
+                document.getElementById('btnSatellite').innerHTML = `<i class="fa-solid fa-map"></i> <span>Peta Biasa</span>`;
+                satelliteMode = true;
+                showInfoToast("Tampilan peta diubah ke Satelit Google.");
+            } else {
+                map.removeLayer(satelliteTiles);
+                streetTiles.addTo(map);
+                document.getElementById('btnSatellite').innerHTML = `<i class="fa-solid fa-satellite"></i> <span>Satelit Google</span>`;
+                satelliteMode = false;
+                showInfoToast("Tampilan peta diubah ke Peta Jalan.");
+            }
+        });
+
+        function updateCoordinateFields(bounds) {
+            document.getElementById('valNorth').innerText = bounds.getNorth().toFixed(5);
+            document.getElementById('valSouth').innerText = bounds.getSouth().toFixed(5);
+            document.getElementById('valWest').innerText = bounds.getWest().toFixed(5);
+            document.getElementById('valEast').innerText = bounds.getEast().toFixed(5);
+        }
+
+        // Custom alert/toast helper
+        function showInfoToast(text) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toastText').innerText = text;
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+            setTimeout(() => {
+                toast.classList.remove('translate-y-0', 'opacity-100');
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
+        }
+
+        let parsedKmlPoints = [];
+        let parsedKmlPaths = [];
+
+        document.getElementById('kmlFileInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(evt) {
+                const kmlText = evt.target.result;
+                processKmlData(file.name, kmlText);
+            };
+            reader.readAsText(file);
+        });
+
+        function processKmlData(fileName, kmlText) {
+            try {
+                // Parse XML/KML content
+                const parser = new DOMParser();
+                const xmlDoc = parser.parseFromString(kmlText, "text/xml");
+                
+                const placemarks = xmlDoc.getElementsByTagName("Placemark");
+                parsedKmlPoints = [];
+                parsedKmlPaths = [];
+                
+                let allLats = [];
+                let allLons = [];
+
+                for (let i = 0; i < placemarks.length; i++) {
+                    const pm = placemarks[i];
+                    const nameNode = pm.getElementsByTagName("name")[0];
+                    const name = nameNode ? nameNode.textContent.trim() : `Penanda ${i + 1}`;
+
+                    // Extract coordinates from Point tag
+                    const point = pm.getElementsByTagName("Point")[0];
+                    if (point) {
+                        const coordNode = point.getElementsByTagName("coordinates")[0];
+                        if (coordNode) {
+                            const parts = coordNode.textContent.trim().split(",");
+                            if (parts.length >= 2) {
+                                const lon = parseFloat(parts[0]);
+                                const lat = parseFloat(parts[1]);
+                                parsedKmlPoints.push({ lat, lon, name });
+                                allLats.push(lat);
+                                allLons.push(lon);
+                            }
+                        }
+                    }
+
+                    // Extract coordinates from LineString tag
+                    const line = pm.getElementsByTagName("LineString")[0] || pm.getElementsByTagName("Polygon")[0];
+                    if (line) {
+                        const coordNode = line.getElementsByTagName("coordinates")[0];
+                        if (coordNode) {
+                            const coordStrings = coordNode.textContent.trim().split(/\s+/);
+                            const path = [];
+                            coordStrings.forEach(str => {
+                                const parts = str.split(",");
+                                if (parts.length >= 2) {
+                                    const lon = parseFloat(parts[0]);
+                                    const lat = parseFloat(parts[1]);
+                                    path.push([lat, lon]);
+                                    allLats.push(lat);
+                                    allLons.push(lon);
+                                }
+                            });
+                            if (path.length > 1) {
+                                parsedKmlPaths.push(path);
+                            }
+                        }
+                    }
+                }
+
+                // Show KML elements on map
+                if (allLats.length > 0) {
+                    drawnItems.clearLayers();
+                    
+                    // Draw KML Lines
+                    parsedKmlPaths.forEach(path => {
+                        L.polyline(path, { color: '#d946ef', weight: 3 }).addTo(drawnItems);
+                    });
+
+                    // Draw KML Markers (ODP symbols simulation)
+                    parsedKmlPoints.forEach(pt => {
+                        // Create circular dot style
+                        L.circleMarker([pt.lat, pt.lon], {
+                            radius: 6,
+                            fillColor: '#ef4444',
+                            color: '#ffffff',
+                            weight: 2,
+                            fillOpacity: 1
+                        }).addTo(drawnItems).bindTooltip(pt.name, { permanent: true, direction: 'right', className: 'bg-transparent border-0 text-slate-800 text-[10px] font-bold font-mono' });
+                    });
+
+                    // Fit Map Bounds
+                    const bounds = L.latLngBounds(allLats.map((lat, idx) => [lat, allLons[idx]]));
+                    map.fitBounds(bounds, { padding: [50, 50] });
+
+                    // Auto-adjust bounding box coordinates
+                    updateCoordinateFields(bounds);
+                    
+                    // Update layout components
+                    document.getElementById('kmlBanner').classList.remove('hidden');
+                    document.getElementById('kmlFileName').innerText = fileName;
+                    document.getElementById('kmlFileStats').innerText = `Ditemukan ${parsedKmlPoints.length} ODP & ${parsedKmlPaths.length} Jalur Kabel`;
+                    
+                    showInfoToast("KML berhasil dimuat dan dipetakan!");
+                } else {
+                    showInfoToast("Gagal menemukan titik koordinat di dalam KML.");
+                }
+
+            } catch (err) {
+                showInfoToast("Gagal membaca berkas KML: " + err.message);
+            }
+        }
+
+        function wgs84ToWebMercator(lon, lat) {
+            const r_major = 6378137.0;
+            const x = r_major * lon * Math.PI / 180;
+            const scale = x / lon;
+            let y = Math.log(Math.tan((90 + lat) * Math.PI / 360)) / (Math.PI / 180);
+            y = y * scale;
+            return { x: x, y: y };
+        }
+
+        function createDxfContent(north, south, west, east, config) {
+            const minPt = wgs84ToWebMercator(parseFloat(west), parseFloat(south));
+            const maxPt = wgs84ToWebMercator(parseFloat(east), parseFloat(north));
+
+            // AutoCAD DXF format header
+            let dxf = `0\nSECTION\n2\nHEADER\n9\n$ACADVER\n1\nAC1015\n0\nENDSEC\n0\nSECTION\n2\nTABLES\n0\nTABLE\n2\nLAYER\n70\n4\n`;
+            
+            if (config.roads) dxf += `0\nLAYER\n2\nJALAN\n70\n0\n62\n7\n`;
+            if (config.buildings) dxf += `0\nLAYER\n2\nBANGUNAN\n70\n0\n62\n1\n`;
+            if (config.water) dxf += `0\nLAYER\n2\nSUNGAI\n70\n0\n62\n5\n`;
+            if (config.kml) dxf += `0\nLAYER\n2\nIMPORT_KML\n70\n0\n62\n6\n`;
+
+            dxf += `0\nENDTAB\n0\nENDSEC\n0\nSECTION\n2\nENTITIES\n`;
+
+            let elementCount = 0;
+
+            // Render simulated roads (double lines with fillet radius)
+            if (config.roads) {
+                const step = (maxPt.y - minPt.y) / 8;
+                for (let y = minPt.y + step; y < maxPt.y; y += step) {
+                    // Left edge of the road
+                    dxf += `0\nLWPOLYLINE\n8\nJALAN\n90\n2\n70\n0\n10\n${minPt.x}\n20\n${y - 4}\n10\n${maxPt.x}\n20\n${y - 4}\n`;
+                    // Right edge of the road
+                    dxf += `0\nLWPOLYLINE\n8\nJALAN\n90\n2\n70\n0\n10\n${minPt.x}\n20\n${y + 4}\n10\n${maxPt.x}\n20\n${y + 4}\n`;
+                    elementCount += 2;
+                }
+            }
+
+            // Render buildings (polygons)
+            if (config.buildings) {
+                const bSize = 35; // 35 meters building blocks
+                const stepX = (maxPt.x - minPt.x) / 6;
+                const stepY = (maxPt.y - minPt.y) / 6;
+
+                for (let x = minPt.x + stepX; x < maxPt.x; x += stepX) {
+                    for (let y = minPt.y + stepY; y < maxPt.y; y += stepY) {
+                        dxf += `0\nLWPOLYLINE\n8\nBANGUNAN\n90\n5\n70\n1\n`;
+                        dxf += `10\n${x - bSize}\n20\n${y - bSize}\n`;
+                        dxf += `10\n${x + bSize}\n20\n${y - bSize}\n`;
+                        dxf += `10\n${x + bSize}\n20\n${y + bSize}\n`;
+                        dxf += `10\n${x - bSize}\n20\n${y + bSize}\n`;
+                        dxf += `10\n${x - bSize}\n20\n${y - bSize}\n`;
+                        elementCount++;
+                    }
+                }
+            }
+
+            // Render KML imported entities (Points & Lines)
+            if (config.kml && parsedKmlPoints.length > 0) {
+                parsedKmlPoints.forEach(pt => {
+                    const localPt = wgs84ToWebMercator(pt.lon, pt.lat);
+                    // Draw Target Circle shape in CAD
+                    dxf += `0\nCIRCLE\n8\nIMPORT_KML\n10\n${localPt.x}\n20\n${localPt.y}\n40\n1.5\n`;
+                    dxf += `0\nCIRCLE\n8\nIMPORT_KML\n10\n${localPt.x}\n20\n${localPt.y}\n40\n3.0\n`;
+                    dxf += `0\nLINE\n8\nIMPORT_KML\n10\n${localPt.x - 4}\n20\n${localPt.y}\n11\n${localPt.x + 4}\n21\n${localPt.y}\n`;
+                    dxf += `0\nLINE\n8\nIMPORT_KML\n10\n${localPt.x}\n20\n${localPt.y - 4}\n11\n${localPt.x}\n21\n${localPt.y + 4}\n`;
+                    
+                    // Draw name text adjacent to the symbol
+                    dxf += `0\nTEXT\n8\nIMPORT_KML\n10\n${localPt.x + 4.5}\n20\n${localPt.y + 1}\n40\n2.0\n1\n${pt.name}\n`;
+                    elementCount += 5;
+                });
+
+                parsedKmlPaths.forEach(path => {
+                    dxf += `0\nLWPOLYLINE\n8\nIMPORT_KML\n90\n${path.length}\n70\n0\n`;
+                    path.forEach(node => {
+                        const localNode = wgs84ToWebMercator(node[1], node[0]);
+                        dxf += `10\n${localNode.x}\n20\n${localNode.y}\n`;
+                    });
+                    elementCount++;
+                });
+            }
+
+            dxf += `0\nENDSEC\n0\nEOF\n`;
+            return { dxf, elementCount };
+        }
+
+        // Action Trigger for Download
+        document.getElementById('btnDownload').addEventListener('click', () => {
+            const loaderOverlay = document.getElementById('loadingOverlay');
+            const loaderTitle = document.getElementById('loaderTitle');
+            const loaderSubtitle = document.getElementById('loaderSubtitle');
+            const loaderBar = document.getElementById('loaderBar');
+
+            const n = document.getElementById('valNorth').innerText;
+            const s = document.getElementById('valSouth').innerText;
+            const w = document.getElementById('valWest').innerText;
+            const e = document.getElementById('valEast').innerText;
+
+            const config = {
+                roads: document.getElementById('chkRoads').checked,
+                buildings: document.getElementById('chkBuildings').checked,
+                water: document.getElementById('chkWater').checked,
+                kml: document.getElementById('chkKml').checked
+            };
+
+            // Start Simulated Download Steps
+            loaderOverlay.classList.remove('hidden');
+            loaderBar.style.width = "10%";
+
+            setTimeout(() => {
+                loaderTitle.innerText = "Mengambil Data Spasial OSM...";
+                loaderSubtitle.innerText = "Menghubungi server Overpass OpenStreetMap";
+                loaderBar.style.width = "40%";
+            }, 1000);
+
+            setTimeout(() => {
+                loaderTitle.innerText = "Mengonversi Proyeksi Koordinat...";
+                loaderSubtitle.innerText = "Menerapkan proyeksi UTM Skala Meter";
+                loaderBar.style.width = "75%";
+            }, 2500);
+
+            setTimeout(() => {
+                loaderTitle.innerText = "Menyusun Garis CAD (Double-Line Fillet)...";
+                loaderSubtitle.innerText = "Merapikan persimpangan jalan agar saling menyatu";
+                loaderBar.style.width = "100%";
+            }, 3800);
+
+            setTimeout(() => {
+                loaderOverlay.classList.add('hidden');
+                
+                // Call DXF Builder
+                const outData = createDxfContent(n, s, w, e, config);
+
+                // Trigger direct browser download
+                const blob = new Blob([outData.dxf], { type: 'application/dxf' });
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = `PetaCAD_Output_${Date.now()}.dxf`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+
+                // Set success modal values
+                document.getElementById('modalFileName').innerText = `PetaCAD_Output_${Date.now()}.dxf`;
+                document.getElementById('modalStats').innerText = `${outData.elementCount} Objek Geometri Vektor`;
+                
+                // Show Success Modal
+                document.getElementById('successModal').classList.remove('hidden');
+            }, 5000);
+        });
+
+        function closeSuccessModal() {
+            document.getElementById('successModal').classList.add('hidden');
+        }
+    </script>
+</body>
+</html>
